@@ -1,38 +1,20 @@
 /*
  * Source: https://rosettacode.org/wiki/Conway%27s_Game_of_Life#C
- * Change log: global variables and 1D arrays 
+ * Change log: changing resolution and cleaning the code 
  */
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-#define h 30
-#define w 30
+#define h 480
+#define w 640
 
 #define for_x for (int x = 0; x < w; x++)
 #define for_y for (int y = 0; y < h; y++)
-#define for_xy for_x for_y
-#define for_yx for_y for_x
 
-#define _idx(x,y) ((((x) <<5) - ((x)<<1)) + (y)) // for 30
-// #define _idx(x,y) ((((x) <<6) + ((x)<<8)) + (y)) // for 640
+#define _idx(x,y) ((((x) <<6) + ((x)<<8)) + (y)) // for 640
 
 unsigned char univ[h*w];
 unsigned char b1[w], b2[w], tail[w], head[w];
 unsigned char n;
 
-void show()
-{
-	printf("\033[H");
-	for_y {
-		for_x printf(univ[_idx(y,x)] ? "\033[07m  \033[m" : "  ");
-		printf("\033[E");
-	}
-	fflush(stdout);
-}
-
-
-void evolve()
+void main(int c, char **v)
 {
 	// prologue
 	for_x {
@@ -66,14 +48,4 @@ void evolve()
 		univ[_idx(h-1, x)] = b2[x];
 	}
 	
-}
-
-void main(int c, char **v)
-{
-	for_x for_y univ[_idx(y,x)] = rand() < RAND_MAX / 10 ? 1 : 0;
-	while (1) {
-		show();
-		evolve();
-		usleep(2000);
-	}
 }
