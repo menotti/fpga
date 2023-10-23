@@ -1,6 +1,6 @@
 /*
  * Source: https://rosettacode.org/wiki/Conway%27s_Game_of_Life#C
- * Change log: using char (1/4 memory)
+ * Change log: unrolling inner loops
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,14 +28,10 @@ void evolve(void *u, int w, int h)
 	unsigned char new[h][w];
 
 	for_yx {
-		int n = 0;
-		for (int y1 = y - 1; y1 <= y + 1; y1++)
-			for (int x1 = x - 1; x1 <= x + 1; x1++)
-				if (univ[(y1 + h) % h][(x1 + w) % w])
-					n++;
-
-		if (univ[y][x]) n--;
-		new[y][x] = (n == 3 || (n == 2 && univ[y][x]));
+		unsigned char n = univ[(y-1+h)%h][(x-1+w)%w] + univ[(y-1+h)%h][(x  +w)%w] + univ[(y-1+h)%h][(x+1+w)%w] +
+		                  univ[(y  +h)%h][(x-1+w)%w] +                              univ[(y  +h)%h][(x+1+w)%w] +
+		                  univ[(y+1+h)%h][(x-1+w)%w] + univ[(y+1+h)%h][(x  +w)%w] + univ[(y+1+h)%h][(x+1+w)%w]; 
+		new[y][x] = ((n | univ[y][x]) == 3);
 	}
 	for_yx univ[y][x] = new[y][x];
 }
