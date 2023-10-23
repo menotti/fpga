@@ -1,6 +1,6 @@
 /*
  * Source: https://rosettacode.org/wiki/Conway%27s_Game_of_Life#C
- * Change log: initial version
+ * Change log: using char (1/4 memory)
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,9 +9,11 @@
 #define for_x for (int x = 0; x < w; x++)
 #define for_y for (int y = 0; y < h; y++)
 #define for_xy for_x for_y
+#define for_yx for_y for_x
+
 void show(void *u, int w, int h)
 {
-	int (*univ)[w] = u;
+	char (*univ)[w] = u;
 	printf("\033[H");
 	for_y {
 		for_x printf(univ[y][x] ? "\033[07m  \033[m" : "  ");
@@ -22,10 +24,10 @@ void show(void *u, int w, int h)
 
 void evolve(void *u, int w, int h)
 {
-	unsigned (*univ)[w] = u;
-	unsigned new[h][w];
+	unsigned char (*univ)[w] = u;
+	unsigned char new[h][w];
 
-	for_y for_x {
+	for_yx {
 		int n = 0;
 		for (int y1 = y - 1; y1 <= y + 1; y1++)
 			for (int x1 = x - 1; x1 <= x + 1; x1++)
@@ -35,12 +37,12 @@ void evolve(void *u, int w, int h)
 		if (univ[y][x]) n--;
 		new[y][x] = (n == 3 || (n == 2 && univ[y][x]));
 	}
-	for_y for_x univ[y][x] = new[y][x];
+	for_yx univ[y][x] = new[y][x];
 }
 
 void game(int w, int h)
 {
-	unsigned univ[h][w];
+	unsigned char univ[h][w];
 	for_xy univ[y][x] = rand() < RAND_MAX / 10 ? 1 : 0;
 	while (1) {
 		show(univ, w, h);
