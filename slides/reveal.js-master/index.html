@@ -129,6 +129,13 @@
 					</section>
 				</section>
 
+				<section>
+					<h2>Before the labs, let's clarify some concepts</h2>
+					<p>
+						<a href="https://github.dev/menotti/ld/digitaljs/">click here to open a hardware simulator</a>
+					</p>
+				</section>
+
 				<section data-auto-animate data-state="eventbeige">
 					<h2>Our first Blinker</h2>
 					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers="|2-3|5|7-8|10-11"><script type="text/template">
@@ -198,7 +205,43 @@
 
 				<section>
 					<h2>Let's do it!</h2>
+					<h3>Pratice time (Lab. #1)</h3>
 					<img src="../img/little_girl.jpg" style="height: 50vh;">
+				</section>
+
+				<section>
+					<h2>A sequential problem</h2>
+					\[\small F_0 = 0, F_1 = 1, F_n = F_{n-1} + F_{n-2}\]
+					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers><script type="text/template">
+					module fibonacci(
+					  input clk,
+					  output [31:0] fibo);
+					  
+					  integer a = 0, b = 1;
+					  	
+					  always@(posedge clk)
+					  begin
+					    a <= b;
+					    b <= a + b;
+					  end
+					  
+					  assign fibo = a;
+					endmodule
+					</script></code></pre>					
+				</section>
+
+				<section>
+					<h2>A parallelizable problem</h2>
+					\[\small gray = (R \times 0.299) + (G \times 0.587) + (B \times 0.114)\]
+					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers><script type="text/template">
+					module gray(
+					  input  [23:0] i_rgb,
+					  output [23:0] o_rgb);
+					  wire [9:0] rgb;
+					  assign rgb = (i_rgb[23:16] + (i_rgb[15:8]<<1) + i_rgb[7:0])>>2;
+					  assign o_rgb = {3{rgb[7:0]}};
+					endmodule
+					</script></code></pre>					
 				</section>
 
 				<section>
@@ -385,6 +428,7 @@
 		</div>
 		<script src="dist/reveal.js"></script>
 		<script src="plugin/zoom/zoom.js"></script>
+		<script src="plugin/math/math.js"></script>
 		<script src="plugin/notes/notes.js"></script>
 		<script src="plugin/search/search.js"></script>
 		<script src="plugin/markdown/markdown.js"></script>
@@ -397,8 +441,9 @@
 				progress: true,
 				center: true,
 				hash: true,
+				transition: 'convex', // none/fade/slide/convex/concave/zoom
 				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight ]
+				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath.KaTeX ]
 			});
 			Reveal.on( 'eventwhite', function() {
 				document.getElementById('theme').setAttribute('href','dist/theme/white.css'); 
