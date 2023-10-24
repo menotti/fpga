@@ -1,3 +1,6 @@
 [submodule "code/BUILD-RISC-V"]
 	path = code/BUILD-RISC-V
 	url = https://github.com/thiago0003/BUILD-RISC-V/
+[submodule "code/ld"]
+	path = code/ld
+	url = https://github.com/menotti/ld
