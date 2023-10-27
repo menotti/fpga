@@ -15,13 +15,6 @@ head:
         .byte   40
 .text
 main:
-        addi    sp,sp,-32
-        sw      ra,28(sp)
-        sw      s0,24(sp)
-        sw      s1,20(sp)
-        sw      s2,16(sp)
-        sw      s3,12(sp)
-        addi    s0,sp,32
 .L39:
         li      s1,0
         j       .L2
