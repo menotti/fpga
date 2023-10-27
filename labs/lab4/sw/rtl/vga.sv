@@ -1,7 +1,7 @@
 module vga #(parameter VGA_BITS = 8) (
   input clk,
   input [31:0] vdata,
-  output reg [VGA_BITS-1:0] VGA_R, VGA_G, VGA_B,
+  output [VGA_BITS-1:0] VGA_R, VGA_G, VGA_B,
   output reg VGA_HS_O, VGA_VS_O,
   output [31:0] vaddr); // 2**9 = 512 > 300 (words) = 1200 (bytes) = 40*30 (res) = 16x16 pixel;
 
@@ -42,12 +42,11 @@ module vga #(parameter VGA_BITS = 8) (
     vga_HS <= (CounterX > (640 + 16) && (CounterX < (640 + 16 + 96)));   // active for 96 clocks
     vga_VS <= (CounterY > (480 + 10) && (CounterY < (480 + 10 +  2)));   // active for  2 clocks
     inDisplayAreaPrev <= (CounterX < 640) && (CounterY < 480);  
-	  inDisplayArea <= inDisplayAreaPrev;
+	 inDisplayArea <= inDisplayAreaPrev;
     VGA_HS_O <= ~vga_HS;
     VGA_VS_O <= ~vga_VS;
-    VGA_R <= inDisplayArea ? {vbyte[5:4], 6'b000000} : 8'b00000000;
-    VGA_G <= inDisplayArea ? {vbyte[3:2], 6'b000000} : 8'b00000000;
-    VGA_B <= inDisplayArea ? {vbyte[1:0], 6'b000000} : 8'b00000000;  
   end
-
+  assign VGA_R = inDisplayArea ? {vbyte[5:4], 6'b000000} : 8'b00000000;
+  assign VGA_G = inDisplayArea ? {vbyte[3:2], 6'b000000} : 8'b00000000;
+  assign VGA_B = inDisplayArea ? {vbyte[1:0], 6'b000000} : 8'b00000000;  
 endmodule

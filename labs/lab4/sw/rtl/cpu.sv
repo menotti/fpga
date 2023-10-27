@@ -1,40 +1,3 @@
-/**
- * Step 20: Creating a RISC-V processor
- * Using GNU tools
- */
-
-`default_nettype none
-`include "clockworks.v"
-`include "emitter_uart.v"
-
-module Memory (
-   input             clk,
-   input      [31:0] mem_addr,  // address to be read
-   output reg [31:0] mem_rdata, // data read from memory
-   input   	     mem_rstrb, // goes high when processor wants to read
-   input      [31:0] mem_wdata, // data to be written
-   input      [3:0]  mem_wmask	// masks for writing the 4 bytes (1=write byte)
-);
-
-   reg [31:0] MEM [0:1535]; // 1536 4-bytes words = 6 Kb of RAM in total
-
-   initial begin
-       $readmemh("firmware.hex",MEM);
-   end
-
-   wire [29:0] word_addr = mem_addr[31:2];
-   
-   always @(posedge clk) begin
-      if(mem_rstrb) begin
-         mem_rdata <= MEM[word_addr];
-      end
-      if(mem_wmask[0]) MEM[word_addr][ 7:0 ] <= mem_wdata[ 7:0 ];
-      if(mem_wmask[1]) MEM[word_addr][15:8 ] <= mem_wdata[15:8 ];
-      if(mem_wmask[2]) MEM[word_addr][23:16] <= mem_wdata[23:16];
-      if(mem_wmask[3]) MEM[word_addr][31:24] <= mem_wdata[31:24];	 
-   end
-endmodule
-
 module Processor (
     input 	  clk,
     input 	  resetn,
@@ -45,7 +8,7 @@ module Processor (
     output [3:0]  mem_wmask
 );
 
-   reg [31:0] PC=0;        // program counter
+   reg [31:0] PC=32'h00000800; // program counter
    reg [31:0] instr;       // current instruction
 
    // See the table P. 105 in RISC-V manual
@@ -83,17 +46,8 @@ module Processor (
    reg [31:0] rs1; // value of source
    reg [31:0] rs2; //  registers.
    wire [31:0] writeBackData; // data to be written to rd
-   wire        writeBackEn;   // asserted if data should be written to rd
-
-`ifdef BENCH   
-   integer     i;
-   initial begin
-      for(i=0; i<32; ++i) begin
-	 RegisterBank[i] = 0;
-      end
-   end
-`endif   
-
+   wire        writeBackEn;   // asserted if data should be written to rd 
+  
    // The ALU
    wire [31:0] aluIn1 = rs1;
    wire [31:0] aluIn2 = isALUreg | isBranch ? rs2 : Iimm;
@@ -128,8 +82,6 @@ module Processor (
    /* verilator lint_on WIDTH */
 
    wire [31:0] leftshift = flip32(shifter);
-   
-
    
    // ADD/SUB/ADDI: 
    // funct7[5] is 1 for SUB and 0 for ADD. We need also to test instr[5]
@@ -166,7 +118,6 @@ module Processor (
       endcase
    end
    
-
    // Address computation
    // An adder used to compute branch address, JAL address and AUIPC.
    // branch->PC+Bimm    AUIPC->PC+Uimm    JAL->PC+Jimm
@@ -254,14 +205,11 @@ module Processor (
    
    always @(posedge clk) begin
       if(!resetn) begin
-	 PC    <= 0;
+	 PC    <= 32'h00000800;
 	 state <= FETCH_INSTR;
       end else begin
-	 if(writeBackEn && rdId != 0) begin
+	 if(writeBackEn && rdId != 0)
 	    RegisterBank[rdId] <= writeBackData;
-	    // $display("r%0d <= %b (%d) (%d)",rdId,writeBackData,writeBackData,$signed(writeBackData));
-	    // For displaying what happens.
-	 end
 	 case(state)
 	   FETCH_INSTR: begin
 	      state <= WAIT_INSTR;
@@ -282,10 +230,7 @@ module Processor (
 	      state <= isLoad  ? LOAD  : 
 		       isStore ? STORE : 
 		       FETCH_INSTR;
-`ifdef BENCH      
-	      if(isSYSTEM) $finish();
-`endif      
-	   end
+      end
 	   LOAD: begin
 	      state <= WAIT_DATA;
 	   end
@@ -302,109 +247,8 @@ module Processor (
    assign writeBackEn = (state==EXECUTE && !isBranch && !isStore) ||
 			(state==WAIT_DATA) ;
    
-   assign mem_addr = (state == WAIT_INSTR || state == FETCH_INSTR) ?
-		     PC : loadstore_addr ;
+   assign mem_addr = (state == WAIT_INSTR || state == FETCH_INSTR) ? PC : loadstore_addr ;
    assign mem_rstrb = (state == FETCH_INSTR || state == LOAD);
    assign mem_wmask = {4{(state == STORE)}} & STORE_wmask;
 
 endmodule
-
-
-module SOC (
-    input 	     CLK,  // system clock 
-    input 	     RESET,// reset button
-    output reg [4:0] LEDS, // system LEDs
-    input 	     RXD,  // UART receive
-    output 	     TXD   // UART transmit
-);
-
-   wire clk;
-   wire resetn;
-
-   wire [31:0] mem_addr;
-   wire [31:0] mem_rdata;
-   wire mem_rstrb;
-   wire [31:0] mem_wdata;
-   wire [3:0]  mem_wmask;
-
-   Processor CPU(
-      .clk(clk),
-      .resetn(resetn),		 
-      .mem_addr(mem_addr),
-      .mem_rdata(mem_rdata),
-      .mem_rstrb(mem_rstrb),
-      .mem_wdata(mem_wdata),
-      .mem_wmask(mem_wmask)
-   );
-   
-   wire [31:0] RAM_rdata;
-   wire [29:0] mem_wordaddr = mem_addr[31:2];
-   wire isIO  = mem_addr[22];
-   wire isRAM = !isIO;
-   wire mem_wstrb = |mem_wmask;
-   
-   Memory RAM(
-      .clk(clk),
-      .mem_addr(mem_addr),
-      .mem_rdata(RAM_rdata),
-      .mem_rstrb(isRAM & mem_rstrb),
-      .mem_wdata(mem_wdata),
-      .mem_wmask({4{isRAM}}&mem_wmask)
-   );
-
-
-   // Memory-mapped IO in IO page, 1-hot addressing in word address.   
-   localparam IO_LEDS_bit      = 0;  // W five leds
-   localparam IO_UART_DAT_bit  = 1;  // W data to send (8 bits) 
-   localparam IO_UART_CNTL_bit = 2;  // R status. bit 9: busy sending
-   
-   always @(posedge clk) begin
-      if(isIO & mem_wstrb & mem_wordaddr[IO_LEDS_bit]) begin
-	 LEDS <= mem_wdata;
-//	 $display("Value sent to LEDS: %b %d %d",mem_wdata,mem_wdata,$signed(mem_wdata));
-      end
-   end
-
-   wire uart_valid = isIO & mem_wstrb & mem_wordaddr[IO_UART_DAT_bit];
-   wire uart_ready;
-   
-   corescore_emitter_uart #(
-      .clk_freq_hz(`CPU_FREQ*1000000),
-//      .baud_rate(115200)
-        .baud_rate(1000000)
-   ) UART(
-      .i_clk(clk),
-      .i_rst(!resetn),
-      .i_data(mem_wdata[7:0]),
-      .i_valid(uart_valid),
-      .o_ready(uart_ready),
-      .o_uart_tx(TXD)      			       
-   );
-
-   wire [31:0] IO_rdata = 
-	       mem_wordaddr[IO_UART_CNTL_bit] ? { 22'b0, !uart_ready, 9'b0}
-	                                      : 32'b0;
-   
-   assign mem_rdata = isRAM ? RAM_rdata :
-	                      IO_rdata ;
-   
-   
-`ifdef BENCH
-   always @(posedge clk) begin
-      if(uart_valid) begin
-	 $write("%c", mem_wdata[7:0] );
-	 $fflush(32'h8000_0001);
-      end
-   end
-`endif   
-   
-   // Gearbox and reset circuitry.
-   Clockworks CW(
-     .CLK(CLK),
-     .RESET(RESET),
-     .clk(clk),
-     .resetn(resetn)
-   );
-
-endmodule
-
