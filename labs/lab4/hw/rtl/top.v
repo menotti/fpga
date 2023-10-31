@@ -1,15 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////////
-// Company: UFSCar
-// Author: Ricardo Menotti
-// 
-// Create Date: 02.10.2023 07:12
-// Project Name: 
-// Design Name: Conway's Game of Life 
-// Module Name: gol
-// Target Devices: EP4CE115F29C7
-// Tool Versions: Quartus Prime Lite Edition 21.1.1 Build 850
-//////////////////////////////////////////////////////////////////////////////////
-
 module top #(parameter VGA_BITS = 8) (
   input CLOCK_50, // 50MHz
   input [3:0] SW,
@@ -24,9 +12,9 @@ module top #(parameter VGA_BITS = 8) (
     //http://tinyvga.com/vga-timing
 	 
   // 640 x 480 @ 25.175 MHz (negative)
-//  localparam  WIDTH = 640, HEIGHT = 480;
-//  localparam HFRONT =  16,  HSYNC =  96, HBACK = 48, HPULSEN = 1;
-//  localparam VFRONT =  10,  VSYNC =   2, VBACK = 33, VPULSEN = 1;
+  localparam  WIDTH = 640, HEIGHT = 480;
+  localparam HFRONT =  16,  HSYNC =  96, HBACK = 48, HPULSEN = 1;
+  localparam VFRONT =  10,  VSYNC =   2, VBACK = 33, VPULSEN = 1;
   
   // 800 x 600 @ 36 MHz (positive)
 //  localparam  WIDTH = 800, HEIGHT = 600;
@@ -34,9 +22,9 @@ module top #(parameter VGA_BITS = 8) (
 //  localparam VFRONT =   1,  VSYNC =   2, VBACK =  22, VPULSEN = 0;
 
   // 1024 x 768 @ 65 MHz (negative)
-  localparam  WIDTH = 1024, HEIGHT = 768;
-  localparam HFRONT =   24,  HSYNC =  136, HBACK = 160, HPULSEN = 1;
-  localparam VFRONT =    3,  VSYNC =    6, VBACK =  29, VPULSEN = 1;
+//  localparam  WIDTH = 1024, HEIGHT = 768;
+//  localparam HFRONT =   24,  HSYNC =  136, HBACK = 160, HPULSEN = 1;
+//  localparam VFRONT =    3,  VSYNC =    6, VBACK =  29, VPULSEN = 1;
 
   // 1280 x 1024 @ 108 MHz (positive)
 //  localparam  WIDTH = 1280, HEIGHT = 1024;
@@ -49,7 +37,7 @@ module top #(parameter VGA_BITS = 8) (
 
   pll pll_inst (
 	.inclk0 ( CLOCK_50 ),
-	.c2 ( VGA_CLK )
+	.c0 ( VGA_CLK )
 	);
 	 
   vga #(WIDTH, HEIGHT, 
