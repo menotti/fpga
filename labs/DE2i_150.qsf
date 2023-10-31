@@ -32,8 +32,8 @@ set_location_assignment PIN_A23 -to VGA_B[5]
 set_location_assignment PIN_G25 -to VGA_B[6]
 set_location_assignment PIN_C22 -to VGA_B[7]
 
-set_location_assignment PIN_B24 -to VGA_HS_O 
-set_location_assignment PIN_A24 -to VGA_VS_O 
+set_location_assignment PIN_B24 -to VGA_HS
+set_location_assignment PIN_A24 -to VGA_VS
 
 set_location_assignment PIN_D27 -to VGA_CLK       
 set_location_assignment PIN_F25 -to VGA_BLANK_N  
