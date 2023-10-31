@@ -19,5 +19,5 @@ module top (
 
     // wire [6:0] segs;
     // dec7seg d0(count[28:25], segs);
-    // assign {HEX5,HEX4,HEX3,HEX2,HEX1,HEX0} = ~{6{segs}};
+    // assign {HEX5,HEX4,HEX3,HEX2,HEX1,HEX0} = {6{segs}};
 endmodule
