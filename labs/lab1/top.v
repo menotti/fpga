@@ -1,4 +1,4 @@
-module blinker (
+module top (
     input CLOCK_50, // 50MHz
     output [3:0] LEDR); // How many LEDs do we have?
     
