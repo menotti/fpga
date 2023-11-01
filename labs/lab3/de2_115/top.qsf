@@ -43,7 +43,7 @@ set_global_assignment -name DEVICE EP4CE115F29C7
 set_global_assignment -name TOP_LEVEL_ENTITY top
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 22.1STD.2
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "09:18:52  OCTOBER 27, 2023"
-set_global_assignment -name LAST_QUARTUS_VERSION "21.1.1 Lite Edition"
+set_global_assignment -name LAST_QUARTUS_VERSION "22.1std.2 Standard Edition"
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
 set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
 set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
@@ -88,15 +88,18 @@ set_location_assignment PIN_A11 -to VGA_B[4]
 set_location_assignment PIN_C12 -to VGA_B[5]
 set_location_assignment PIN_D11 -to VGA_B[6]
 set_location_assignment PIN_D12 -to VGA_B[7]
-set_location_assignment PIN_G13 -to VGA_HS_O
-set_location_assignment PIN_C13 -to VGA_VS_O
 set_location_assignment PIN_A12 -to VGA_CLK
 set_location_assignment PIN_F11 -to VGA_BLANK_N
 set_location_assignment PIN_C10 -to VGA_SYNC_N
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_global_assignment -name VERILOG_FILE pll.v
+set_global_assignment -name VERILOG_FILE ../rtl/rom.v
+set_global_assignment -name VERILOG_FILE ../rtl/gray.v
 set_global_assignment -name VERILOG_FILE ../rtl/vga.v
 set_global_assignment -name VERILOG_FILE ../rtl/top.v
 set_global_assignment -name VERILOG_FILE ../rtl/random.v
 set_global_assignment -name VERILOG_FILE ../rtl/gol.v
+set_location_assignment PIN_G13 -to VGA_HS
+set_location_assignment PIN_C13 -to VGA_VS
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
