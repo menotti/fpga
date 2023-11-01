@@ -129,10 +129,10 @@ module Processor (
    
    // register write back
    assign writeBackData = (isJAL || isJALR) ? PCplus4   :
-			      isLUI         ? Uimm      :
-			      isAUIPC       ? PCplusImm :
-			      isLoad        ? LOAD_data :
-			                      aluOut;
+			                     isLUI         ? Uimm      :
+			                     isAUIPC       ? PCplusImm :
+			                     isLoad        ? LOAD_data :
+			                                     aluOut;
 
    wire [31:0] nextPC = ((isBranch && takeBranch) || isJAL) ? PCplusImm   :
 	                                  isJALR   ? {aluPlus[31:1],1'b0} :
@@ -174,7 +174,7 @@ module Processor (
    assign mem_wdata[15: 8] = loadstore_addr[0] ? rs2[7:0]  : rs2[15: 8];
    assign mem_wdata[23:16] = loadstore_addr[1] ? rs2[7:0]  : rs2[23:16];
    assign mem_wdata[31:24] = loadstore_addr[0] ? rs2[7:0]  :
-			     loadstore_addr[1] ? rs2[15:8] : rs2[31:24];
+			                    loadstore_addr[1] ? rs2[15:8] : rs2[31:24];
 
    // The memory write mask:
    //    1111                     if writing a word
@@ -202,53 +202,45 @@ module Processor (
    localparam WAIT_DATA   = 5;
    localparam STORE       = 6;
    reg [2:0] state = FETCH_INSTR;
-   
-   always @(posedge clk) begin
-      if(!resetn) begin
-	 PC    <= 32'h00000800;
-	 state <= FETCH_INSTR;
-      end else begin
-	 if(writeBackEn)
-	    RegisterBank[rdId] <= writeBackData;
-	 case(state)
-	   FETCH_INSTR: begin
-	      state <= WAIT_INSTR;
-	   end
-	   WAIT_INSTR: begin
-	      instr <= mem_rdata;
-	      state <= FETCH_REGS;
-	   end
-	   FETCH_REGS: begin
-	      rs1 <= rs1Id ? RegisterBank[rs1Id] : 32'b0;
-	      rs2 <= rs2Id ? RegisterBank[rs2Id] : 32'b0;
-	      state <= EXECUTE;
-	   end
-	   EXECUTE: begin
-	      if(!isSYSTEM) begin
-		 PC <= nextPC;
-	      end
-	      state <= isLoad  ? LOAD  : 
-		       isStore ? STORE : 
-		       FETCH_INSTR;
+     
+  always @(posedge clk) begin
+    if(!resetn) begin
+      PC <= 32'h00000800;
+      state <= FETCH_INSTR;
+    end else begin
+      if (writeBackEn)
+        RegisterBank[rdId] <= writeBackData;
+      case(state)
+      FETCH_INSTR:
+        state <= WAIT_INSTR;
+      WAIT_INSTR: begin
+        instr <= mem_rdata;
+        state <= FETCH_REGS;
       end
-	   LOAD: begin
-	      state <= WAIT_DATA;
-	   end
-	   WAIT_DATA: begin
-	      state <= FETCH_INSTR;
-	   end
-	   STORE: begin
-	      state <= FETCH_INSTR;
-	   end
-	 endcase 
+      FETCH_REGS: begin
+        rs1 <= rs1Id ? RegisterBank[rs1Id] : 32'b0;
+        rs2 <= rs2Id ? RegisterBank[rs2Id] : 32'b0;
+        state <= EXECUTE;
       end
-   end
-
-   assign writeBackEn = (state==EXECUTE && !isBranch && !isStore) ||
-			(state==WAIT_DATA) ;
-   
-   assign mem_addr = (state == WAIT_INSTR || state == FETCH_INSTR) ? PC : loadstore_addr ;
-   assign mem_rstrb = (state == FETCH_INSTR || state == LOAD);
-   assign mem_wmask = {4{(state == STORE)}} & STORE_wmask;
-
+      EXECUTE: begin
+        if(!isSYSTEM)
+          PC <= nextPC;
+        state <= isLoad  ? LOAD : 
+                 isStore ? STORE : 
+                           FETCH_INSTR;
+      end
+      LOAD:
+        state <= WAIT_DATA;
+      WAIT_DATA:
+        state <= FETCH_INSTR;
+      STORE:
+        state <= FETCH_INSTR;
+      endcase 
+    end
+  end
+  
+  assign writeBackEn = (state==EXECUTE && !isBranch && !isStore) ||	(state==WAIT_DATA) ;
+  assign mem_addr = (state == WAIT_INSTR || state == FETCH_INSTR) ? PC : loadstore_addr ;
+  assign mem_rstrb = (state == FETCH_INSTR || state == LOAD);
+  assign mem_wmask = {4{(state == STORE)}} & STORE_wmask;
 endmodule
