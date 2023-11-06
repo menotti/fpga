@@ -1,5 +1,10 @@
 set_location_assignment PIN_Y2  -to CLOCK_50
 
+set_location_assignment  PIN_M23 -to KEY[0]
+set_location_assignment  PIN_M21 -to KEY[1]
+set_location_assignment  PIN_N21 -to KEY[2]
+set_location_assignment  PIN_R24 -to KEY[3]
+
 set_location_assignment PIN_AB28 -to SW[0]
 set_location_assignment PIN_AC28 -to SW[1]
 set_location_assignment PIN_AC27 -to SW[2]
@@ -71,11 +76,6 @@ set_location_assignment  PIN_F15 -to LEDR[14]
 set_location_assignment  PIN_G15 -to LEDR[15] 
 set_location_assignment  PIN_G16 -to LEDR[16] 
 set_location_assignment  PIN_H15 -to LEDR[17] 
-
-set_location_assignment  PIN_M23 -to KEY[0]
-set_location_assignment  PIN_M21 -to KEY[1]
-set_location_assignment  PIN_N21 -to KEY[2]
-set_location_assignment  PIN_R24 -to KEY[3]
 
 set_location_assignment  PIN_G18  -to HEX0[0] 
 set_location_assignment  PIN_F22  -to HEX0[1] 

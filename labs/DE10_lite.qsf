@@ -1,5 +1,8 @@
 set_location_assignment PIN_P11 -to CLOCK_50
 
+set_location_assignment PIN_B8 -to KEY[0]
+set_location_assignment PIN_A7 -to KEY[1]
+
 set_location_assignment PIN_C10 -to SW[0]
 set_location_assignment PIN_C11 -to SW[1]
 set_location_assignment PIN_D12 -to SW[2]
@@ -10,6 +13,24 @@ set_location_assignment PIN_A13 -to SW[6]
 set_location_assignment PIN_A14 -to SW[7]
 set_location_assignment PIN_B14 -to SW[8]
 set_location_assignment PIN_F15 -to SW[9]
+
+set_location_assignment PIN_AA1 -to VGA_R[0]
+set_location_assignment PIN_V1  -to VGA_R[1]
+set_location_assignment PIN_Y2  -to VGA_R[2]
+set_location_assignment PIN_Y1  -to VGA_R[3]
+
+set_location_assignment PIN_W1  -to VGA_G[0]
+set_location_assignment PIN_T2  -to VGA_G[1]
+set_location_assignment PIN_R2  -to VGA_G[2]
+set_location_assignment PIN_R1  -to VGA_G[3]
+
+set_location_assignment PIN_P1  -to VGA_B[0]
+set_location_assignment PIN_T1  -to VGA_B[1]
+set_location_assignment PIN_P4  -to VGA_B[2]
+set_location_assignment PIN_N2  -to VGA_B[3]
+
+set_location_assignment PIN_N3  -to VGA_HS
+set_location_assignment PIN_N1  -to VGA_VS
 
 set_location_assignment PIN_A8  -to LEDR[0]
 set_location_assignment PIN_A9  -to LEDR[1]
@@ -64,18 +85,3 @@ set_location_assignment PIN_N18 -to HEX5[3]
 set_location_assignment PIN_M20 -to HEX5[4]
 set_location_assignment PIN_N19 -to HEX5[5]
 set_location_assignment PIN_N20 -to HEX5[6]
-
-set_location_assignment PIN_AA1 -to VGA_R[0]
-set_location_assignment PIN_V1  -to VGA_R[1]
-set_location_assignment PIN_Y2  -to VGA_R[2]
-set_location_assignment PIN_Y1  -to VGA_R[3]
-set_location_assignment PIN_W1  -to VGA_G[0]
-set_location_assignment PIN_T2  -to VGA_G[1]
-set_location_assignment PIN_R2  -to VGA_G[2]
-set_location_assignment PIN_R1  -to VGA_G[3]
-set_location_assignment PIN_P1  -to VGA_B[0]
-set_location_assignment PIN_T1  -to VGA_B[1]
-set_location_assignment PIN_P4  -to VGA_B[2]
-set_location_assignment PIN_N2  -to VGA_B[3]
-set_location_assignment PIN_N3  -to VGA_HS
-set_location_assignment PIN_N1  -to VGA_VS
