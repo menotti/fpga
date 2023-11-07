@@ -1,5 +1,5 @@
 	add t0, zero, zero
-	addi t1, zero, 1200
+	li t1, 76800
 loop:
 	lbu t2, 0(t0)
 	addi t2, t2, 1

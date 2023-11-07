@@ -8,7 +8,13 @@ module Processor (
     output [3:0]  mem_wmask
 );
 
-   reg [31:0] PC=32'h00000800; // program counter
+//   localparam PCreset = 32'h0004B000; // 76800 word
+   localparam PCreset = 32'h00001F400; // 32768 word
+   // localparam PCreset = 32'h00007D00; // 8192 word
+   // localparam PCreset = 32'h00002000; // 2048 word
+   // localparam PCreset = 32'h00000800; // 512 word
+
+   reg [31:0] PC=PCreset; // program counter
    reg [31:0] instr;       // current instruction
 
    // See the table P. 105 in RISC-V manual
@@ -215,7 +221,7 @@ module Processor (
    
    always @(posedge clk) begin
       if(!resetn) begin
-	 PC    <= 32'h00000800;
+	 PC    <= PCreset;
 	 state <= FETCH_INSTR;
       end else begin
 	 if(writeBackEn && rdId != 0)
@@ -240,6 +246,9 @@ module Processor (
 	      state <= isLoad  ? LOAD  : 
 		       isStore ? STORE : 
 		       FETCH_INSTR;
+`ifdef BENCH      
+	      if(isSYSTEM) $finish();
+`endif                
       end
 	   LOAD: begin
 	      state <= WAIT_DATA;

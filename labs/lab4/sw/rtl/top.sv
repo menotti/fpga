@@ -3,7 +3,7 @@ module top #(parameter VGA_BITS = 8) (
   input [17:0] SW,
   output [VGA_BITS-1:0] VGA_R, VGA_G, VGA_B,
   output VGA_HS_O, VGA_VS_O,
-  output reg VGA_CLK, 
+  output reg VGA_CLK = 0, 
   output VGA_BLANK_N, VGA_SYNC_N);
 
   always@(posedge CLOCK_50)

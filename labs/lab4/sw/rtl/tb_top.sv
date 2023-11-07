@@ -11,6 +11,5 @@ module tb_top;
     begin
         $dumpfile("dump.vcd"); 
         $dumpvars(0);
-        #5000 $finish;
     end
 endmodule
