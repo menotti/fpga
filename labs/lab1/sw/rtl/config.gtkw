@@ -1,0 +1,45 @@
+[*]
+[*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
+[*] Tue Nov  7 14:29:03 2023
+[*]
+[dumpfile] "/home/esl/Documents/fpga/labs/lab1/sw/rtl/dump.vcd"
+[dumpfile_mtime] "Tue Nov  7 14:22:38 2023"
+[dumpfile_size] 142019
+[savefile] "/home/esl/Documents/fpga/labs/lab1/sw/rtl/config.gtkw"
+[timestart] 380
+[size] 1848 1016
+[pos] -1 -1
+*-5.549233 515 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb_top.
+[treeopen] tb_top.dut.
+[treeopen] tb_top.dut.RISCV.
+[sst_width] 233
+[signals_width] 291
+[sst_expanded] 1
+[sst_vpaned_height] 289
+@28
+tb_top.CLOCK_50
+tb_top.dut.resetn
+@22
+tb_top.dut.mem_addr[31:0]
+tb_top.dut.mem_rdata[31:0]
+tb_top.dut.mem_wdata[31:0]
+tb_top.dut.mem_wmask[3:0]
+@28
+tb_top.dut.isIO
+tb_top.dut.isRAM
+@22
+tb_top.dut.RISCV.PC[31:0]
+tb_top.dut.RISCV.instr[31:0]
+tb_top.dut.RISCV.rs1[31:0]
+tb_top.dut.RISCV.rs2[31:0]
+tb_top.dut.RISCV.writeBackData[31:0]
+@28
+tb_top.dut.RISCV.writeBackEn
+@23
+tb_top.dut.RISCV.rdId[4:0]
+@22
+tb_top.dut.RISCV.rs1Id[4:0]
+tb_top.dut.RISCV.rs2Id[4:0]
+[pattern_trace] 1
+[pattern_trace] 0

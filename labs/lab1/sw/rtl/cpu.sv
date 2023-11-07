@@ -48,6 +48,15 @@ module Processor (
    wire [31:0] writeBackData; // data to be written to rd
    wire        writeBackEn;   // asserted if data should be written to rd 
   
+`ifdef BENCH   
+   integer     i;
+   initial begin
+      for(i=0; i<32; ++i) begin
+	 RegisterBank[i] = 0;
+      end
+   end
+`endif  
+
    // The ALU
    wire [31:0] aluIn1 = rs1;
    wire [31:0] aluIn2 = isALUreg | isBranch ? rs2 : Iimm;
@@ -123,8 +132,8 @@ module Processor (
    // branch->PC+Bimm    AUIPC->PC+Uimm    JAL->PC+Jimm
    // Equivalent to PCplusImm = PC + (isJAL ? Jimm : isAUIPC ? Uimm : Bimm)
    wire [31:0] PCplusImm = PC + ( instr[3] ? Jimm[31:0] :
-				  instr[4] ? Uimm[31:0] :
-				             Bimm[31:0] );
+	                        			  instr[4] ? Uimm[31:0] :
+				                                     Bimm[31:0] );
    wire [31:0] PCplus4 = PC+4;
    
    // register write back
@@ -210,7 +219,7 @@ module Processor (
     end else begin
       if (writeBackEn)
         RegisterBank[rdId] <= writeBackData;
-      case(state)
+              case(state)
       FETCH_INSTR:
         state <= WAIT_INSTR;
       WAIT_INSTR: begin
