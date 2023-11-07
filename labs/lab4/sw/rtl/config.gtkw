@@ -1,0 +1,29 @@
+[*]
+[*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
+[*] Tue Nov  7 15:30:44 2023
+[*]
+[dumpfile] "/home/esl/Workspace/fpga/labs/lab4/sw/rtl/dump.vcd"
+[dumpfile_mtime] "Tue Nov  7 15:29:34 2023"
+[dumpfile_size] 116796
+[savefile] "/home/esl/Workspace/fpga/labs/lab4/sw/rtl/config.gtkw"
+[timestart] 0
+[size] 1848 1016
+[pos] -39 -39
+*-9.465271 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb_top.
+[sst_width] 233
+[signals_width] 150
+[sst_expanded] 1
+[sst_vpaned_height] 289
+@28
+tb_top.CLOCK_50
+@22
+tb_top.SW[17:0]
+tb_top.dut.vaddr[31:0]
+tb_top.dut.vdata[31:0]
+tb_top.dut.mem_addr[31:0]
+tb_top.dut.mem_wdata[31:0]
+@23
+tb_top.dut.mem_wmask[3:0]
+[pattern_trace] 1
+[pattern_trace] 0
