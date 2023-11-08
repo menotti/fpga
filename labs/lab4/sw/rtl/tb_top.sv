@@ -7,9 +7,9 @@ module tb_top;
     always
         #5 CLOCK_50 = ~CLOCK_50;
 
-    initial
-    begin
-        $dumpfile("dump.vcd"); 
-        $dumpvars(0);
-    end
+    // initial
+    // begin
+    //     $dumpfile("dump.vcd"); 
+    //     $dumpvars(0);
+    // end
 endmodule

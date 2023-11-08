@@ -24,7 +24,16 @@ module mem #(
 	reg [DATA_WIDTH_R-1:0] data_reg2;
 
   initial
+  begin
+   		integer i;
     $readmemh("mem.txt", ram);
+	`ifdef BENCH   
+      	for (i=1; i<32000; i=i+1) begin
+			ram[i] = 0;
+		end
+		 	
+	`endif  
+  end
 	// port A
 	always@(posedge clk)
 	begin

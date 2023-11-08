@@ -8,8 +8,8 @@ module Processor (
     output [3:0]  mem_wmask
 );
 
-//   localparam PCreset = 32'h0004B000; // 76800 word
-   localparam PCreset = 32'h00001F400; // 32768 word
+   // localparam PCreset = 32'h000007EF40; // 131072 word
+   localparam PCreset = 32'h0001F400; // 32768 word
    // localparam PCreset = 32'h00007D00; // 8192 word
    // localparam PCreset = 32'h00002000; // 2048 word
    // localparam PCreset = 32'h00000800; // 512 word
