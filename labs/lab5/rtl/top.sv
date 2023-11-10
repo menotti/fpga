@@ -1,4 +1,4 @@
-module top #(parameter VGA_BITS = 8) (
+module top #(parameter VGA_BITS = 4) (
   input CLOCK_50, // 50MHz
   input [17:0] SW,
   output reg [17:0] LEDR, // How many LEDs do we have?
@@ -9,7 +9,7 @@ module top #(parameter VGA_BITS = 8) (
   output [6:0] HEX1,
   output [6:0] HEX0
   output [VGA_BITS-1:0] VGA_R, VGA_G, VGA_B,
-  output VGA_HS_O, VGA_VS_O,
+  output VGA_HS, VGA_VS,
   output reg VGA_CLK = 0, 
   output VGA_BLANK_N, VGA_SYNC_N);
 
@@ -79,8 +79,8 @@ module top #(parameter VGA_BITS = 8) (
     .clk(VGA_CLK), 
     .vdata(vdata),
     .vaddr(vaddr),
-    .VGA_HS_O(VGA_HS_O), 
-    .VGA_VS_O(VGA_VS_O), 
+    .VGA_HS_O(VGA_HS), 
+    .VGA_VS_O(VGA_VS), 
     .VGA_R(VGA_R),
     .VGA_G(VGA_G),
     .VGA_B(VGA_B)
