@@ -2,7 +2,7 @@
 
 ## Lab. 1 - blink/counter
 
- 
+
 ## Lab. 2 - fibonacci
 
 
@@ -12,5 +12,5 @@
 ## Lab. 4 - game of life
 
 
+## Lab. 5 - riscv
 
- 
