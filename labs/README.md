@@ -1,5 +1,10 @@
 # Labs 
 
+```
+cd lab#
+make -f ../Makefile program
+```
+
 ## Lab. 1 - blink/counter
 
 

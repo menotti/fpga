@@ -3,13 +3,11 @@ module top #(parameter VGA_BITS = 8) (
   input [3:0] SW,
   output [VGA_BITS-1:0] VGA_R, VGA_G, VGA_B,
   output VGA_HS, VGA_VS,
-  output VGA_CLK, 
+  output reg VGA_CLK, 
   output VGA_BLANK_N, VGA_SYNC_N);
 
-  pll pll_inst (
-	.inclk0 ( CLOCK_50 ),
-	.c0 ( VGA_CLK )
-	);
+  always@(posedge CLOCK_50)
+    VGA_CLK = ~VGA_CLK; // 25MHz
 	
   wire [7:0] vdata;
   wire [8:0] vaddr;

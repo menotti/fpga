@@ -1,3 +1,7 @@
+
+
+# These are the pin assignments for the Altera DE2i-150
+
 set_location_assignment PIN_AJ16 -to CLOCK_50
 
 set_location_assignment  PIN_AA26 -to KEY[0]

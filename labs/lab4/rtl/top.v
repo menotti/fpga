@@ -3,7 +3,7 @@ module top #(parameter VGA_BITS = 8) (
   input [3:0] SW,
   output [VGA_BITS-1:0] VGA_R, VGA_G, VGA_B,
   output VGA_HS_O, VGA_VS_O,
-  output VGA_CLK, 
+  output reg VGA_CLK,
   output VGA_BLANK_N, VGA_SYNC_N);
 
   wire VGA_DA; // In display area
@@ -31,21 +31,16 @@ module top #(parameter VGA_BITS = 8) (
 //  localparam HFRONT =   48,  HSYNC =  112, HBACK = 248, HPULSEN = 0;
 //  localparam VFRONT =    1,  VSYNC =    3, VBACK =  38, VPULSEN = 0;
 
-  
-//  always@(posedge CLOCK_50)
-//    VGA_CLK = ~VGA_CLK; // 25MHz
+  always@(posedge CLOCK_50)
+    VGA_CLK = ~VGA_CLK; // 25MHz
 
-  pll pll_inst (
-	.inclk0 ( CLOCK_50 ),
-	.c0 ( VGA_CLK )
-	);
-	 
   vga #(WIDTH, HEIGHT, 
         HFRONT, HSYNC, HBACK, HPULSEN, 
-		  VFRONT, VSYNC, VBACK, VPULSEN) 
+		    VFRONT, VSYNC, VBACK, VPULSEN) 
 		    video(VGA_CLK, VGA_HS_O, VGA_VS_O, VGA_DA);
+
   gol #(WIDTH, HEIGHT) 
-          board(VGA_CLK, SW[0], VGA_DA, VGA_PIXEL);
+        board(VGA_CLK, SW[0], VGA_DA, VGA_PIXEL);
   
   assign VGA_R = {VGA_BITS{VGA_DA ? SW[3] ^ VGA_PIXEL : 1'b0}};
   assign VGA_G = {VGA_BITS{VGA_DA ? SW[2] ^ VGA_PIXEL : 1'b0}};

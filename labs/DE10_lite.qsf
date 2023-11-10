@@ -1,3 +1,7 @@
+
+
+# These are the pin assignments for the Altera DE10-lite
+
 set_location_assignment PIN_P11 -to CLOCK_50
 
 set_location_assignment PIN_B8 -to KEY[0]

@@ -48,7 +48,7 @@ module top #(parameter VGA_BITS = 8) (
     .data_out1(RAM_rdata),
     .data_out2(vdata),
     .be1(mem_wmask),
-    .we1(we1)
+    .we1(we1 & isRAM)
   );
 
   // Memory-mapped IO in IO page, 1-hot addressing in word address.   
