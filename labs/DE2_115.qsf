@@ -2,6 +2,9 @@
 
 # These are the pin assignments for the Altera DE2-115
 
+set_global_assignment -name FAMILY "Cyclone IV E"
+set_global_assignment -name DEVICE EP4CE115F29C7
+
 set_location_assignment PIN_Y2  -to CLOCK_50
 
 set_location_assignment  PIN_M23 -to KEY[0]
