@@ -2,8 +2,11 @@
  * Source: https://rosettacode.org/wiki/Conway%27s_Game_of_Life#C
  * Change log: changing resolution again and changing variables to registers 
  */
-#define h 320
-#define w 240
+
+#include <stdio.h>
+
+#define w (320)
+#define h (240)
 
 #define for_x for (register int x = 0; x < w; x++)
 #define for_y for (register int y = 0; y < h; y++)
@@ -13,7 +16,6 @@
 unsigned char univ[h*w];
 unsigned char b1[w], b2[w], tail[w], head[w];
 
-
 void main()
 {
     register int rnd_v = 0x0110;
@@ -22,7 +24,7 @@ void main()
         rnd_v = ((rnd_v &(1u << 16))>>16) ^ ((rnd_v & (1u << 14))>>14) ^ ((rnd_v & (1u << 13))>>13) ^ ((rnd_v & (1u << 11))>>11) | rnd_v<<1;
         univ[_idx(y, x)] = rnd_v & 1;
     }
-
+    
     register unsigned char n;
     while (1) {
         // prologue
