@@ -1,11 +1,11 @@
-module top #(parameter VGA_BITS = 8) (
+module top #(parameter VGA_BITS = 4) (
   input CLOCK_50, // 50MHz
   input [3:0] SW,
   output [VGA_BITS-1:0] VGA_R, VGA_G, VGA_B,
   output VGA_HS, VGA_VS,
   output reg VGA_CLK, 
   output VGA_BLANK_N, VGA_SYNC_N);
-
+  
   always@(posedge CLOCK_50)
     VGA_CLK = ~VGA_CLK; // 25MHz
 	
@@ -28,9 +28,9 @@ module top #(parameter VGA_BITS = 8) (
 
   assign image = SW[0] ? color : gray;
   
-  assign VGA_R = vga_DA ? image[23:16] : {VGA_BITS{1'b0}};
-  assign VGA_G = vga_DA ? image[15: 8] : {VGA_BITS{1'b0}};
-  assign VGA_B = vga_DA ? image[ 7: 0] : {VGA_BITS{1'b0}};
+  assign VGA_R = vga_DA ? image[23:23-VGA_BITS+1] : {VGA_BITS{1'b0}};
+  assign VGA_G = vga_DA ? image[15:15-VGA_BITS+1] : {VGA_BITS{1'b0}};
+  assign VGA_B = vga_DA ? image[07:07-VGA_BITS+1] : {VGA_BITS{1'b0}};
   
   assign VGA_BLANK_N = 1'b1;
   assign VGA_SYNC_N  = 1'b0;
