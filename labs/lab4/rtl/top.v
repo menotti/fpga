@@ -2,7 +2,7 @@ module top #(parameter VGA_BITS = 8) (
   input CLOCK_50, // 50MHz
   input [3:0] SW,
   output [VGA_BITS-1:0] VGA_R, VGA_G, VGA_B,
-  output VGA_HS_O, VGA_VS_O,
+  output VGA_HS, VGA_VS,
   output reg VGA_CLK,
   output VGA_BLANK_N, VGA_SYNC_N);
 
@@ -37,7 +37,7 @@ module top #(parameter VGA_BITS = 8) (
   vga #(WIDTH, HEIGHT, 
         HFRONT, HSYNC, HBACK, HPULSEN, 
 		    VFRONT, VSYNC, VBACK, VPULSEN) 
-		    video(VGA_CLK, VGA_HS_O, VGA_VS_O, VGA_DA);
+		    video(VGA_CLK, VGA_HS, VGA_VS, VGA_DA);
 
   gol #(WIDTH, HEIGHT) 
         board(VGA_CLK, SW[0], VGA_DA, VGA_PIXEL);
