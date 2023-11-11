@@ -7,7 +7,7 @@ module top #(parameter VGA_BITS = 4) (
   output [6:0] HEX3,
   output [6:0] HEX2,
   output [6:0] HEX1,
-  output [6:0] HEX0
+  output [6:0] HEX0,
   output [VGA_BITS-1:0] VGA_R, VGA_G, VGA_B,
   output VGA_HS, VGA_VS,
   output reg VGA_CLK = 0, 
@@ -58,7 +58,7 @@ module top #(parameter VGA_BITS = 4) (
 
   reg [31:0] DISP7SEGS;
   always @(posedge CLOCK_50)
-    if (isIO & mem_wstrb)
+    if (isIO & we1)
       if (mem_wordaddr[IO_LEDS_bit])
         LEDR <= mem_wdata;
       else 
