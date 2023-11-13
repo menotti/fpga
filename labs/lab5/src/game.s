@@ -12,13 +12,16 @@ head:
 
 .text
 main:
-        li      s2,272
+.L45:
+        li      a0, 0x400010
+        lw      a5, (a0)
+        beq     a5,zero,.L2
         li      s1,0
-        j       .L2
-.L5:
-        li      ra,0
         j       .L3
-.L4:
+.L6:
+        li      ra,0
+        j       .L4
+.L5:
         mv      a5,s2
         srli    a4,a5,16
         mv      a5,s2
@@ -47,17 +50,18 @@ main:
         add     a5,a3,a5
         sb      a4,0(a5)
         addi    ra,ra,1
-.L3:
+.L4:
         li      a5,239
-        ble     ra,a5,.L4
+        ble     ra,a5,.L5
         addi    s1,s1,1
-.L2:
+.L3:
         li      a5,319
-        ble     s1,a5,.L5
-.L43:
+        ble     s1,a5,.L6
+        j       .L45
+.L2:
         li      ra,0
-        j       .L6
-.L7:
+        j       .L8
+.L9:
         lui     a5,%hi(univ)
         addi    a5,a5,%lo(univ)
         add     a5,a5,ra
@@ -78,21 +82,21 @@ main:
         add     a5,a5,ra
         sb      a4,0(a5)
         addi    ra,ra,1
-.L6:
+.L8:
         li      a5,319
-        ble     ra,a5,.L7
+        ble     ra,a5,.L9
         li      ra,0
-        j       .L8
-.L26:
+        j       .L10
+.L28:
         li      s1,0
-        j       .L9
-.L22:
-        beq     s1,zero,.L10
-        addi    a5,s1,-1
         j       .L11
-.L10:
+.L24:
+        beq     s1,zero,.L12
+        addi    a5,s1,-1
+        j       .L13
+.L12:
         li      a5,319
-.L11:
+.L13:
         lui     a4,%hi(tail)
         addi    a4,a4,%lo(tail)
         add     a5,a4,a5
@@ -104,12 +108,12 @@ main:
         add     a5,a4,a5
         andi    a4,a5,0xff
         li      a5,319
-        beq     s1,a5,.L12
+        beq     s1,a5,.L14
         addi    a5,s1,1
-        j       .L13
-.L12:
+        j       .L15
+.L14:
         li      a5,0
-.L13:
+.L15:
         lui     a3,%hi(tail)
         addi    a3,a3,%lo(tail)
         add     a5,a3,a5
@@ -119,12 +123,12 @@ main:
         slli    a3,ra,8
         slli    a5,ra,6
         add     a3,a3,a5
-        beq     s1,zero,.L14
+        beq     s1,zero,.L16
         addi    a5,s1,-1
-        j       .L15
-.L14:
+        j       .L17
+.L16:
         li      a5,319
-.L15:
+.L17:
         add     a5,a5,a3
         lui     a3,%hi(univ)
         addi    a3,a3,%lo(univ)
@@ -136,12 +140,12 @@ main:
         slli    a5,ra,6
         add     a3,a3,a5
         li      a5,319
-        beq     s1,a5,.L16
+        beq     s1,a5,.L18
         addi    a5,s1,1
-        j       .L17
-.L16:
+        j       .L19
+.L18:
         li      a5,0
-.L17:
+.L19:
         add     a5,a5,a3
         lui     a3,%hi(univ)
         addi    a3,a3,%lo(univ)
@@ -154,12 +158,12 @@ main:
         addi    a5,ra,1
         slli    a5,a5,6
         add     a3,a3,a5
-        beq     s1,zero,.L18
+        beq     s1,zero,.L20
         addi    a5,s1,-1
-        j       .L19
-.L18:
+        j       .L21
+.L20:
         li      a5,319
-.L19:
+.L21:
         add     a5,a5,a3
         lui     a3,%hi(univ)
         addi    a3,a3,%lo(univ)
@@ -185,12 +189,12 @@ main:
         slli    a5,a5,6
         add     a3,a3,a5
         li      a5,319
-        beq     s1,a5,.L20
+        beq     s1,a5,.L22
         addi    a5,s1,1
-        j       .L21
-.L20:
+        j       .L23
+.L22:
         li      a5,0
-.L21:
+.L23:
         add     a5,a5,a3
         lui     a3,%hi(univ)
         addi    a3,a3,%lo(univ)
@@ -217,12 +221,12 @@ main:
         add     a5,a5,s1
         sb      a4,0(a5)
         addi    s1,s1,1
-.L9:
+.L11:
         li      a5,319
-        ble     s1,a5,.L22
+        ble     s1,a5,.L24
         li      s1,0
-        j       .L23
-.L25:
+        j       .L25
+.L27:
         slli    a4,ra,8
         slli    a5,ra,6
         add     a5,a4,a5
@@ -235,7 +239,7 @@ main:
         addi    a5,a5,%lo(tail)
         add     a5,a5,s1
         sb      a4,0(a5)
-        ble     ra,zero,.L24
+        ble     ra,zero,.L26
         addi    a5,ra,-1
         slli    a4,a5,8
         addi    a5,ra,-1
@@ -250,7 +254,7 @@ main:
         addi    a3,a3,%lo(univ)
         add     a5,a3,a5
         sb      a4,0(a5)
-.L24:
+.L26:
         lui     a5,%hi(b1)
         addi    a5,a5,%lo(b1)
         add     a5,a5,s1
@@ -260,22 +264,22 @@ main:
         add     a5,a5,s1
         sb      a4,0(a5)
         addi    s1,s1,1
-.L23:
+.L25:
         li      a5,319
-        ble     s1,a5,.L25
+        ble     s1,a5,.L27
         addi    ra,ra,1
-.L8:
+.L10:
         li      a5,238
-        ble     ra,a5,.L26
+        ble     ra,a5,.L28
         li      ra,0
-        j       .L27
-.L40:
-        beq     ra,zero,.L28
-        addi    a5,ra,-1
         j       .L29
-.L28:
+.L42:
+        beq     ra,zero,.L30
+        addi    a5,ra,-1
+        j       .L31
+.L30:
         li      a5,319
-.L29:
+.L31:
         lui     a4,%hi(tail)
         addi    a4,a4,%lo(tail)
         add     a5,a4,a5
@@ -287,42 +291,26 @@ main:
         add     a5,a4,a5
         andi    a4,a5,0xff
         li      a5,319
-        beq     ra,a5,.L30
+        beq     ra,a5,.L32
         addi    a5,ra,1
-        j       .L31
-.L30:
+        j       .L33
+.L32:
         li      a5,0
-.L31:
+.L33:
         lui     a3,%hi(tail)
         addi    a3,a3,%lo(tail)
         add     a5,a3,a5
         lbu     a5,0(a5)
         add     a5,a4,a5
         andi    a4,a5,0xff
-        beq     ra,zero,.L32
+        beq     ra,zero,.L34
         li      a5,77824
         addi    a5,a5,-1345
-        add     a5,ra,a5
-        j       .L33
-.L32:
-        li      a5,77824
-        addi    a5,a5,-1025
-.L33:
-        lui     a3,%hi(univ)
-        addi    a3,a3,%lo(univ)
-        add     a5,a3,a5
-        lbu     a5,0(a5)
-        add     a5,a4,a5
-        andi    a4,a5,0xff
-        li      a5,319
-        beq     ra,a5,.L34
-        li      a5,77824
-        addi    a5,a5,-1343
         add     a5,ra,a5
         j       .L35
 .L34:
         li      a5,77824
-        addi    a5,a5,-1344
+        addi    a5,a5,-1025
 .L35:
         lui     a3,%hi(univ)
         addi    a3,a3,%lo(univ)
@@ -330,12 +318,28 @@ main:
         lbu     a5,0(a5)
         add     a5,a4,a5
         andi    a4,a5,0xff
-        beq     ra,zero,.L36
-        addi    a5,ra,-1
+        li      a5,319
+        beq     ra,a5,.L36
+        li      a5,77824
+        addi    a5,a5,-1343
+        add     a5,ra,a5
         j       .L37
 .L36:
-        li      a5,319
+        li      a5,77824
+        addi    a5,a5,-1344
 .L37:
+        lui     a3,%hi(univ)
+        addi    a3,a3,%lo(univ)
+        add     a5,a3,a5
+        lbu     a5,0(a5)
+        add     a5,a4,a5
+        andi    a4,a5,0xff
+        beq     ra,zero,.L38
+        addi    a5,ra,-1
+        j       .L39
+.L38:
+        li      a5,319
+.L39:
         lui     a3,%hi(head)
         addi    a3,a3,%lo(head)
         add     a5,a3,a5
@@ -349,12 +353,12 @@ main:
         add     a5,a4,a5
         andi    a4,a5,0xff
         li      a5,319
-        beq     ra,a5,.L38
+        beq     ra,a5,.L40
         addi    a5,ra,1
-        j       .L39
-.L38:
+        j       .L41
+.L40:
         li      a5,0
-.L39:
+.L41:
         lui     a3,%hi(head)
         addi    a3,a3,%lo(head)
         add     a5,a3,a5
@@ -379,12 +383,12 @@ main:
         add     a5,a5,ra
         sb      a4,0(a5)
         addi    ra,ra,1
-.L27:
+.L29:
         li      a5,319
-        ble     ra,a5,.L40
+        ble     ra,a5,.L42
         li      ra,0
-        j       .L41
-.L42:
+        j       .L43
+.L44:
         li      a5,77824
         addi    a5,a5,-1664
         add     a5,ra,a5
@@ -408,7 +412,7 @@ main:
         add     a5,a3,a5
         sb      a4,0(a5)
         addi    ra,ra,1
-.L41:
+.L43:
         li      a5,319
-        ble     ra,a5,.L42
-        j       .L43
+        ble     ra,a5,.L44
+        j       .L45
