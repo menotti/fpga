@@ -1,4 +1,4 @@
-module top #(parameter VGA_BITS = 8) (
+module top #(parameter VGA_BITS = 4) (
   input CLOCK_50, // 50MHz
   input [3:0] SW,
   output [VGA_BITS-1:0] VGA_R, VGA_G, VGA_B,

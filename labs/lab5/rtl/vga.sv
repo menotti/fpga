@@ -59,10 +59,10 @@ module vga #(parameter VGA_BITS = 4) (
     VGA_HS_O <= ~vga_HS;
     VGA_VS_O <= ~vga_VS;
   end
-  // assign VGA_R = inDisplayArea ? {vbyte[5:4], 6'b000000} : 8'b00000000;
-  // assign VGA_G = inDisplayArea ? {vbyte[3:2], 6'b000000} : 8'b00000000;
-  // assign VGA_B = inDisplayArea ? {vbyte[1:0], 6'b000000} : 8'b00000000;  
-  assign VGA_R = inDisplayArea ? {8{vbyte[0]}} : 8'b00000000;
-  assign VGA_G = inDisplayArea ? {8{vbyte[0]}} : 8'b00000000;
-  assign VGA_B = inDisplayArea ? {8{vbyte[0]}} : 8'b00000000;  
+  assign VGA_R = inDisplayArea ? {vbyte[5:4], {VGA_BITS-2{1'b0}} : {VGA_BITS{1'b0}};
+  assign VGA_G = inDisplayArea ? {vbyte[3:2], {VGA_BITS-2{1'b0}} : {VGA_BITS{1'b0}};
+  assign VGA_B = inDisplayArea ? {vbyte[1:0], {VGA_BITS-2{1'b0}} : {VGA_BITS{1'b0}};
+  // assign VGA_R = {VGA_BITS{inDisplayArea ? vbyte[0] : 1'b0}};
+  // assign VGA_G = {VGA_BITS{inDisplayArea ? vbyte[0] : 1'b0}};
+  // assign VGA_B = {VGA_BITS{inDisplayArea ? vbyte[0] : 1'b0}};
 endmodule

@@ -19,7 +19,7 @@ module top #(parameter VGA_BITS = 4) (
   assign fill = SW[1] ? rand : zero;
 
   wire vga_DA; 	 
-  vga video(VGA_CLK, vaddr, VGA_HS, VGA_VS, vga_DA);
+  vga #(VGA_BITS) video(VGA_CLK, vaddr, VGA_HS, VGA_VS, vga_DA);
   rom mario(VGA_CLK, vaddr, vdata);
   
   assign color = {vdata[5:4], fill[17:12], vdata[3:2], fill[11:6], vdata[1:0], fill[5:0]};
