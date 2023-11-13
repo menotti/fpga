@@ -57,7 +57,7 @@ SRCS = $(wildcard rtl/*.sv) \
 all: smart.log $(PROJECT).asm.rpt $(PROJECT).sta.rpt 
 
 clean:
-	$(RM) -rf *.done *.qws *.sld *.rpt *.chg smart.log *.htm *.eqn *.pin *.sof *.pof db incremental_db output_files *.summary *.smsg *.jdi $(ASSIGNMENT_FILES)
+	$(RM) -rf *.done *.qws *.sld *.rpt *.chg smart.log *.htm *.eqn *.pin *.sof *.pof greybox_tmp db incremental_db output_files *.summary *.smsg *.jdi $(ASSIGNMENT_FILES)
 
 map: smart.log $(PROJECT).map.rpt
 fit: smart.log $(PROJECT).fit.rpt
