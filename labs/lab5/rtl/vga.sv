@@ -45,10 +45,10 @@ module vga #(parameter VGA_BITS = 4) (
   // assign vaddr = col + (row<<7) + (row<<5); // 160 col = 2^7 + 2^5
   assign vaddr = col + (row<<8) + (row<<6); // 320 col = 2^8 + 2^6
   // assign vaddr = col + (row<<9) + (row<<7); // 640 col = 2^9 + 2^7
-  assign vbyte = col[1] ? (col[0] ? vdata[ 7: 0] : 
-                                    vdata[15: 8]): 
-                          (col[0] ? vdata[23:16] : 
-                                    vdata[31:24]); // byte select (reversed)
+  assign vbyte = col[1] ? (col[0] ? vdata[31:24] : 
+                                    vdata[23:16]): 
+                          (col[0] ? vdata[15: 8] : 
+                                    vdata[ 7: 0]);
 
   always @(posedge clk)
   begin
@@ -59,10 +59,10 @@ module vga #(parameter VGA_BITS = 4) (
     VGA_HS_O <= ~vga_HS;
     VGA_VS_O <= ~vga_VS;
   end
-  assign VGA_R = inDisplayArea ? {vbyte[5:4], {VGA_BITS-2{1'b0}} : {VGA_BITS{1'b0}};
-  assign VGA_G = inDisplayArea ? {vbyte[3:2], {VGA_BITS-2{1'b0}} : {VGA_BITS{1'b0}};
-  assign VGA_B = inDisplayArea ? {vbyte[1:0], {VGA_BITS-2{1'b0}} : {VGA_BITS{1'b0}};
-  // assign VGA_R = {VGA_BITS{inDisplayArea ? vbyte[0] : 1'b0}};
-  // assign VGA_G = {VGA_BITS{inDisplayArea ? vbyte[0] : 1'b0}};
-  // assign VGA_B = {VGA_BITS{inDisplayArea ? vbyte[0] : 1'b0}};
+  // assign VGA_R = inDisplayArea ? {vbyte[5:4], {VGA_BITS-2{1'b0}}} : {VGA_BITS{1'b0}};
+  // assign VGA_G = inDisplayArea ? {vbyte[3:2], {VGA_BITS-2{1'b0}}} : {VGA_BITS{1'b0}};
+  // assign VGA_B = inDisplayArea ? {vbyte[1:0], {VGA_BITS-2{1'b0}}} : {VGA_BITS{1'b0}};
+  assign VGA_R = {VGA_BITS{inDisplayArea ? vbyte[0] : 1'b0}};
+  assign VGA_G = {VGA_BITS{inDisplayArea ? vbyte[0] : 1'b0}};
+  assign VGA_B = {VGA_BITS{inDisplayArea ? vbyte[0] : 1'b0}};
 endmodule

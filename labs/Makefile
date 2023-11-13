@@ -14,10 +14,10 @@ ASSIGNMENT_FILES = $(PROJECT).qpf $(PROJECT).qsf
 
 ###################################################################
 # Part, Family, Boardfile 
-BOARD = DE0_CV
-#BOARD = DE2_115
-#BOARD = DE2i_150
-#BOARD = DE10_lite
+# BOARD = DE0_CV
+# BOARD = DE2_115
+BOARD = DE2i_150
+# BOARD = DE10_lite
 ifeq ($(BOARD),DE0_CV)
 	FAMILY = "Cyclone V"
 	PART = 5CEBA4F23C7
