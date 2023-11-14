@@ -1,5 +1,5 @@
 .text
-    xor x1,  x1, x1
+    xor x1, x1, x1
     li  x2, 0x400000 # MMIO 
 loop:
     lw  x5, 0x10(x2) # SWs 

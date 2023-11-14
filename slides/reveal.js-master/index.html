@@ -199,7 +199,7 @@
 
 				<section>
 					<h2>Let's do it!</h2>
-					<h3>Pratice time (Lab. #1)</h3>
+					<h3>Pratice time (Lab. #1a)</h3>
 					<img src="../img/little_girl.jpg" style="height: 50vh;">
 				</section>
 
@@ -278,7 +278,7 @@
 
 				<section>
 					<h2>Let's do it!</h2>
-					<h3>Pratice time (Lab. #1)</h3>
+					<h3>Pratice time (Lab. #1b)</h3>
 					<img src="../img/little_girl.jpg" style="height: 50vh;">
 				</section>
 
@@ -547,38 +547,550 @@
 					<h3>Pratice time (Lab. #4)</h3>
 					<img src="../img/little_girl.jpg" style="height: 50vh;">
 				</section>
-
+				
 				<section>
 					<h3>RISC-V is an open standard Instruction Set Architecture (ISA) enabling a new era of processor innovation through open collaboration</h3>
 					<em>RISC-V enables the community to share technical investment, contribute to the strategic future, create more rapidly, enjoy unprecedented design freedom, and substantially reduce the cost of innovation</em>
+				</section>		
+
+				<section>
+					<h2 class="r-fit-text">From Blinker to RISC-V [<a href="#refs">8</a>]</h2>
+					<ol>
+						<li>Brief explanation of RISC-V philosophy</li>
+						<li>Didactic and very well documented tutorial</li>
+						<li>Targeting small FPGAs with open source tools</li>
+					</ol>
 				</section>
 
 				<section>
-					<h2>title</h2>
-					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers><script type="text/template">
-					module ...
+					<h2>FemtoRV (step20.v)</h2>
+					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers="2-8|11-18|20-32|34-44|46-55|58-65|67-81|109-121|123-135|137-144|146-157|159-174|186-200|202-210|212-220|222-232|233-236|237-241|242-252|253-261|266-271"><script type="text/template">
+						module Processor (
+							input 	      clk,
+							input 	      resetn,
+							output [31:0] mem_addr, 
+							input  [31:0] mem_rdata, 
+							output 	      mem_rstrb,
+							output [31:0] mem_wdata,
+							output [ 3:0] mem_wmask
+						);
+						
+						   // localparam PCreset = 32'h000007EF40; // 131072 word
+						   localparam PCreset = 32'h0001F400; // 32768 word
+						   // localparam PCreset = 32'h00007D00; // 8192 word
+						   // localparam PCreset = 32'h00002000; // 2048 word
+						   // localparam PCreset = 32'h00000800; // 512 word
+						
+						   reg [31:0] PC = PCreset; // program counter
+						   reg [31:0] instr;       // current instruction
+						
+						   // See the table P. 105 in RISC-V manual
+						   
+						   // The 10 RISC-V instructions
+						   wire isALUreg  =  (instr[6:0] == 7'b0110011); // rd <- rs1 OP rs2   
+						   wire isALUimm  =  (instr[6:0] == 7'b0010011); // rd <- rs1 OP Iimm
+						   wire isBranch  =  (instr[6:0] == 7'b1100011); // if(rs1 OP rs2) PC<-PC+Bimm
+						   wire isJALR    =  (instr[6:0] == 7'b1100111); // rd <- PC+4; PC<-rs1+Iimm
+						   wire isJAL     =  (instr[6:0] == 7'b1101111); // rd <- PC+4; PC<-PC+Jimm
+						   wire isAUIPC   =  (instr[6:0] == 7'b0010111); // rd <- PC + Uimm
+						   wire isLUI     =  (instr[6:0] == 7'b0110111); // rd <- Uimm   
+						   wire isLoad    =  (instr[6:0] == 7'b0000011); // rd <- mem[rs1+Iimm]
+						   wire isStore   =  (instr[6:0] == 7'b0100011); // mem[rs1+Simm] <- rs2
+						   wire isSYSTEM  =  (instr[6:0] == 7'b1110011); // special
+						
+						   // The 5 immediate formats
+						   wire [31:0] Uimm={    instr[31],   instr[30:12], {12{1'b0}}};
+						   wire [31:0] Iimm={{21{instr[31]}}, instr[30:20]};
+						   wire [31:0] Simm={{21{instr[31]}}, instr[30:25],instr[11:7]};
+						   wire [31:0] Bimm={{20{instr[31]}}, instr[7],instr[30:25],instr[11:8],1'b0};
+						   wire [31:0] Jimm={{12{instr[31]}}, instr[19:12],instr[20],instr[30:21],1'b0};
+						
+						   // Source and destination registers
+						   wire [4:0] rs1Id = instr[19:15];
+						   wire [4:0] rs2Id = instr[24:20];
+						   wire [4:0] rdId  = instr[11:7];
+						   
+						   // function codes
+						   wire [2:0] funct3 = instr[14:12];
+						   wire [6:0] funct7 = instr[31:25];
+						   
+						   // The registers bank
+						   reg [31:0] RegisterBank [0:31];
+						   reg [31:0] rs1; // value of source
+						   reg [31:0] rs2; //  registers.
+						   wire [31:0] writeBackData; // data to be written to rd
+						   wire        writeBackEn;   // asserted if data should be written to rd 
+						  
+						
+						`ifdef BENCH   
+							integer i;
+							initial begin
+								for(i=0; i<32; ++i) begin
+									RegisterBank[i] = 0;
+								end
+							end
+						`endif  
+						
+						   // The ALU
+						   wire [31:0] aluIn1 = rs1;
+						   wire [31:0] aluIn2 = isALUreg | isBranch ? rs2 : Iimm;
+						
+						   wire [4:0] shamt = isALUreg ? rs2[4:0] : instr[24:20]; // shift amount
+						
+						   // The adder is used by both arithmetic instructions and JALR.
+						   wire [31:0] aluPlus = aluIn1 + aluIn2;
+						
+						   // Use a single 33 bits subtract to do subtraction and all comparisons
+						   // (trick borrowed from swapforth/J1)
+						   wire [32:0] aluMinus = {1'b1, ~aluIn2} + {1'b0,aluIn1} + 33'b1;
+						   wire        LT  = (aluIn1[31] ^ aluIn2[31]) ? aluIn1[31] : aluMinus[32];
+						   wire        LTU = aluMinus[32];
+						   wire        EQ  = (aluMinus[31:0] == 0);
+						
+						   // Flip a 32 bit word. Used by the shifter (a single shifter for
+						   // left and right shifts, saves silicium !)
+						   function [31:0] flip32;
+							  input [31:0] x;
+							  flip32 = {x[ 0], x[ 1], x[ 2], x[ 3], x[ 4], x[ 5], x[ 6], x[ 7], 
+								x[ 8], x[ 9], x[10], x[11], x[12], x[13], x[14], x[15], 
+								x[16], x[17], x[18], x[19], x[20], x[21], x[22], x[23],
+								x[24], x[25], x[26], x[27], x[28], x[29], x[30], x[31]};
+						   endfunction
+						
+						   wire [31:0] shifter_in = (funct3 == 3'b001) ? flip32(aluIn1) : aluIn1;
+						   
+						   /* verilator lint_off WIDTH */
+						   wire [31:0] shifter = 
+									   $signed({instr[30] & aluIn1[31], shifter_in}) >>> aluIn2[4:0];
+						   /* verilator lint_on WIDTH */
+						
+						   wire [31:0] leftshift = flip32(shifter);
+						   
+						   // ADD/SUB/ADDI: 
+						   // funct7[5] is 1 for SUB and 0 for ADD. We need also to test instr[5]
+						   // to make the difference with ADDI
+						   //
+						   // SRLI/SRAI/SRL/SRA: 
+						   // funct7[5] is 1 for arithmetic shift (SRA/SRAI) and 
+						   // 0 for logical shift (SRL/SRLI)
+						   reg [31:0]  aluOut;
+						   always @(*) begin
+								case(funct3)
+									3'b000: aluOut = (funct7[5] & instr[5]) ? aluMinus[31:0] : aluPlus;
+									3'b001: aluOut = leftshift;
+									3'b010: aluOut = {31'b0, LT};
+									3'b011: aluOut = {31'b0, LTU};
+									3'b100: aluOut = (aluIn1 ^ aluIn2);
+									3'b101: aluOut = shifter;
+									3'b110: aluOut = (aluIn1 | aluIn2);
+									3'b111: aluOut = (aluIn1 & aluIn2);	
+								endcase
+						   end
+						
+						   // The predicate for branch instructions
+						   reg takeBranch;
+						   always @(*) begin
+								case(funct3)
+									3'b000: takeBranch = EQ;
+									3'b001: takeBranch = !EQ;
+									3'b100: takeBranch = LT;
+									3'b101: takeBranch = !LT;
+									3'b110: takeBranch = LTU;
+									3'b111: takeBranch = !LTU;
+									default: takeBranch = 1'b0;
+								endcase
+						   end
+						   
+						   // Address computation
+						   // An adder used to compute branch address, JAL address and AUIPC.
+						   // branch->PC+Bimm    AUIPC->PC+Uimm    JAL->PC+Jimm
+						   // Equivalent to PCplusImm = PC + (isJAL ? Jimm : isAUIPC ? Uimm : Bimm)
+						   wire [31:0] PCplusImm = PC + ( instr[3] ? Jimm[31:0] :
+						                                  instr[4] ? Uimm[31:0] :
+						                                             Bimm[31:0] );
+						   wire [31:0] PCplus4 = PC + 4;
+						   
+						   // register write back
+						   assign writeBackData = (isJAL || isJALR) ? PCplus4   :
+						                           isLUI            ? Uimm      :
+						                           isAUIPC          ? PCplusImm :
+						                           isLoad           ? LOAD_data :
+						                                              aluOut;
+						
+						   wire [31:0] nextPC = ((isBranch && takeBranch) || isJAL) ? PCplusImm   :
+						                          isJALR                            ? {aluPlus[31:1],1'b0} :
+						                                                              PCplus4;
+						
+						   wire [31:0] loadstore_addr = rs1 + (isStore ? Simm : Iimm);
+						   
+						   // Load
+						   // All memory accesses are aligned on 32 bits boundary. For this
+						   // reason, we need some circuitry that does unaligned halfword
+						   // and byte load/store, based on:
+						   // - funct3[1:0]:  00->byte 01->halfword 10->word
+						   // - mem_addr[1:0]: indicates which byte/halfword is accessed
+						
+						   wire mem_byteAccess     = funct3[1:0] == 2'b00;
+						   wire mem_halfwordAccess = funct3[1:0] == 2'b01;
+						
+						
+						   wire [15:0] LOAD_halfword =
+								   loadstore_addr[1] ? mem_rdata[31:16] : mem_rdata[15:0];
+						
+						   wire  [7:0] LOAD_byte =
+								   loadstore_addr[0] ? LOAD_halfword[15:8] : LOAD_halfword[7:0];
+						
+						   // LOAD, in addition to funct3[1:0], LOAD depends on:
+						   // - funct3[2] (instr[14]): 0->do sign expansion   1->no sign expansion
+						   wire LOAD_sign =
+							!funct3[2] & (mem_byteAccess ? LOAD_byte[7] : LOAD_halfword[15]);
+						
+						   wire [31:0] LOAD_data =
+								 mem_byteAccess ? {{24{LOAD_sign}},     LOAD_byte} :
+							 mem_halfwordAccess ? {{16{LOAD_sign}}, LOAD_halfword} :
+												  mem_rdata ;
+						
+						   // Store
+						   // ------------------------------------------------------------------------
+						
+						   assign mem_wdata[ 7: 0] = rs2[7:0];
+						   assign mem_wdata[15: 8] = loadstore_addr[0] ? rs2[7:0]  : rs2[15: 8];
+						   assign mem_wdata[23:16] = loadstore_addr[1] ? rs2[7:0]  : rs2[23:16];
+						   assign mem_wdata[31:24] = loadstore_addr[0] ? rs2[7:0]  :
+						                             loadstore_addr[1] ? rs2[15:8] : rs2[31:24];
+						
+						   // The memory write mask:
+						   //    1111                     if writing a word
+						   //    0011 or 1100             if writing a halfword
+						   //                                (depending on loadstore_addr[1])
+						   //    0001, 0010, 0100 or 1000 if writing a byte
+						   //                                (depending on loadstore_addr[1:0])
+						
+						   wire [3:0] STORE_wmask =
+						     mem_byteAccess       ?
+						       (loadstore_addr[1] ?
+						       (loadstore_addr[0] ? 4'b1000 : 4'b0100) :
+						       (loadstore_addr[0] ? 4'b0010 : 4'b0001)):
+						     mem_halfwordAccess   ?
+						       (loadstore_addr[1] ? 4'b1100 : 4'b0011) :
+						     4'b1111;
+						   
+
+						   // The state machine
+						   localparam FETCH_INSTR = 0;
+						   localparam WAIT_INSTR  = 1;
+						   localparam FETCH_REGS  = 2;
+						   localparam EXECUTE     = 3;
+						   localparam LOAD        = 4;
+						   localparam WAIT_DATA   = 5;
+						   localparam STORE       = 6;
+						   reg [2:0] state = FETCH_INSTR;
+						   
+						   always @(posedge clk) begin
+						     if(!resetn) begin
+						       PC    <= PCreset;
+						       state <= FETCH_INSTR;
+						     end else begin
+						       if(writeBackEn && rdId != 0)
+						         RegisterBank[rdId] <= writeBackData;
+						       case(state)
+						         FETCH_INSTR: begin
+						           state <= WAIT_INSTR;
+						         end
+						         WAIT_INSTR: begin
+						           instr <= mem_rdata;
+						           state <= FETCH_REGS;
+						         end
+						         FETCH_REGS: begin
+						           rs1 <= RegisterBank[rs1Id];
+						           rs2 <= RegisterBank[rs2Id];
+						           state <= EXECUTE;
+						         end
+						         EXECUTE: begin
+						           if(!isSYSTEM) begin
+						             PC <= nextPC;
+						           end
+						           state <= isLoad  ? LOAD  : 
+						                    isStore ? STORE : 
+						                              FETCH_INSTR;
+						`ifdef BENCH      
+						           if(isSYSTEM) $finish();
+						`endif                
+						         end
+						         LOAD: begin
+						           state <= WAIT_DATA;
+						         end
+						         WAIT_DATA: begin
+						           state <= FETCH_INSTR;
+						         end
+						         STORE: begin
+						           state <= FETCH_INSTR;
+						         end
+						       endcase 
+						     end
+						   end
+						
+						   assign writeBackEn = (state==EXECUTE && !isBranch && !isStore) ||
+						                        (state==WAIT_DATA) ;
+						   
+						   assign mem_addr = (state == WAIT_INSTR || state == FETCH_INSTR) ? PC : loadstore_addr ;
+						   assign mem_rstrb = (state == FETCH_INSTR || state == LOAD);
+						   assign mem_wmask = {4{(state == STORE)}} & STORE_wmask;
+						
+						endmodule
+					</script></code></pre>						
+				</section>		
+				
+				<section>
+					<h2>System-On-Chip</h2>
+					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers="2-9|11-15|17-29|31-46|49-61|63-71|73-85"><script type="text/template">
+						module top #(parameter VGA_BITS = 4) (
+							input CLOCK_50, // 50MHz
+							input [9:0] SW,
+							output reg [9:0] LEDR, // How many LEDs do we have?
+							output [6:0] HEX5, HEX4, HEX3, HEX2, HEX1, HEX0,
+							output [VGA_BITS-1:0] VGA_R, VGA_G, VGA_B,
+							output VGA_HS, VGA_VS,
+							output reg VGA_CLK = 0, 
+							output VGA_BLANK_N, VGA_SYNC_N);
+						  
+							always@(posedge CLOCK_50)
+								VGA_CLK = ~VGA_CLK; // 25MHz
+						  
+							wire resetn;
+							power_on_reset RESET(CLOCK_50, resetn);
+						  
+							wire [31:0] mem_addr;
+							wire [31:0] mem_rdata;
+							wire [31:0] mem_wdata;
+							wire [ 3:0] mem_wmask;
+							wire mem_rstrb;
+							Processor RISCV(
+							  .clk(CLOCK_50),
+							  .resetn(resetn),
+							  .mem_addr(mem_addr),
+							  .mem_rdata(mem_rdata), // RAM_rdata or IO_rdata
+							  .mem_wdata(mem_wdata),
+							  .mem_wmask(mem_wmask)
+							);
+							  
+							wire we1 = |mem_wmask;
+							wire isIO  = mem_addr[22]; // MMIO
+							wire isRAM = !isIO;
+							wire [29:0] mem_wordaddr = mem_addr[31:2];
+							wire [31:0] RAM_rdata;
+							wire [31:0] vdata;
+							wire [31:0] vaddr;
+							mem RAM(
+							  .clk(CLOCK_50),
+							  .addr1(mem_addr),
+							  .addr2(vaddr),
+							  .data_in1(mem_wdata),
+							  .data_out1(RAM_rdata),
+							  .data_out2(vdata),
+							  .be1(mem_wmask),
+							  .we1(we1 & isRAM)
+							);
+						  
+							// Memory-mapped IO in IO page, 1-hot addressing in word address.   
+							localparam IO_LEDS_bit      = 0;  // (W) red leds
+							localparam IO_7SEGS_bit     = 1;  // (W) 7 segments leds
+							localparam IO_SWS_bit       = 2;  // (R) switch buttons
+						  
+							reg [31:0] reg7segs;
+							always @(posedge CLOCK_50)
+								if (isIO & we1)
+									if (mem_wordaddr[IO_LEDS_bit])
+										LEDR <= mem_wdata;
+									else 
+										if (mem_wordaddr[IO_7SEGS_bit])
+											reg7segs <= mem_wdata;
+						  
+							dec7seg d0(reg7segs[ 3: 0], HEX0);
+							dec7seg d1(reg7segs[ 7: 4], HEX1);
+							dec7seg d2(reg7segs[11: 8], HEX2);
+							dec7seg d3(reg7segs[15:12], HEX3);
+							dec7seg d4(reg7segs[19:16], HEX4);
+							dec7seg d5(reg7segs[23:20], HEX5);
+						  
+							wire [31:0] IO_rdata = mem_wordaddr[IO_SWS_bit] ? {0, SW} : 32'b0;
+							assign mem_rdata = isRAM ? RAM_rdata : IO_rdata;
+						  
+							vga #(VGA_BITS) VGA(
+							  .clk(VGA_CLK), 
+							  .vdata(vdata),
+							  .vaddr(vaddr),
+							  .VGA_HS_O(VGA_HS), 
+							  .VGA_VS_O(VGA_VS), 
+							  .VGA_R(VGA_R),
+							  .VGA_G(VGA_G),
+							  .VGA_B(VGA_B)
+							);
+							
+							assign VGA_BLANK_N = 1'b1;
+							assign VGA_SYNC_N  = 1'b0;
+						endmodule
 					</script></code></pre>					
-				</section>
+				</section>	
 
 				<section>
-					<h2>title</h2>
-					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers><script type="text/template">
-					module ...
+					<h2 class="r-fit-text">Using Memory-Mapped I/O</h2>
+					<pre data-id="code-animation"><code class="hljs armasm" data-trim data-line-numbers="1-5|6-8|9-11|12-14|"><script type="text/template">
+					.text
+						li x2, 0x400004 #  LEDs 
+						li x3, 0x400008 # 7SEGs 
+						li x4, 0x400010 #   SWs 
+						li x5, 0xFF
+					loop:
+						lw x1, 0(x4)
+						ble x1, x5, led
+					segs:
+						sw x1, 0(x3)
+						jal loop
+					led:    
+						sw x1, 0(x2)
+						jal loop					
 					</script></code></pre>					
-				</section>
+				</section>	
 
 				<section>
-					<h2>title</h2>
-					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers><script type="text/template">
-					module ...
+					<h2 class="r-fit-text">Incrementing LEDs (counter)</h2>
+					<pre data-id="code-animation"><code class="hljs armasm" data-trim data-line-numbers><script type="text/template">
+					.text
+						xor x1, x1, x1
+						li  x2, 0x400000 # MMIO 
+					loop:
+						lw  x5, 0x10(x2) # SWs 
+						add x1,  x1, x5
+						sw  x1, 0x04(x2) # LEDs 
+						sw  x1, 0x08(x2) # 7SEGs 
+						j loop
 					</script></code></pre>					
-				</section>
+				</section>	
 
 				<section>
-					<h2>title</h2>
-					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers><script type="text/template">
-					module ...
+					<h2>Let's do it!</h2>
+					<h3>Pratice time (Lab. #5ab)</h3>
+					<img src="../img/little_girl.jpg" style="height: 50vh;">
+				</section>
+
+				<section data-auto-animate>
+					<h2 class="r-fit-text">Conway's Game of Life</h2><sup><a href="https://godbolt.org/z/Yc54z1s6b">https://godbolt.org/z/Yc54z1s6b</a></sup>
+					<pre data-id="code-animation"><code class="hljs c" data-trim data-line-numbers="5-7|11-12|14-15|16-19|21-22|24"><script type="text/template">
+						/*
+						* Source: https://rosettacode.org/wiki/Conway%27s_Game_of_Life#C
+						*/
+					   
+					   #define for_x for (int x = 0; x < w; x++)
+					   #define for_y for (int y = 0; y < h; y++)
+					   #define for_xy for_x for_y
+					   
+					   void evolve(void *u, int w, int h)
+					   {
+						   unsigned (*univ)[w] = u;
+						   unsigned new[h][w];
+					   
+						   for_y for_x {
+							   int n = 0;
+							   for (int y1 = y - 1; y1 <= y + 1; y1++)
+								   for (int x1 = x - 1; x1 <= x + 1; x1++)
+									   if (univ[(y1 + h) % h][(x1 + w) % w])
+										   n++;
+					   
+							   if (univ[y][x]) n--;
+								   new[y][x] = (n == 3 || (n == 2 && univ[y][x]));
+						   }
+						   for_y for_x univ[y][x] = new[y][x];
+					   }					
 					</script></code></pre>					
+				</section>					
+
+				<section data-auto-animate>
+					<h2 class="r-fit-text">Conway's Game of Life</h2>
+					<h3>Troubles:</h3>
+					<ol>
+						<li>Takes up twice the memory</li>
+						<li>Generates <b>mul</b> instruction to address memory</li>
+						<li>Generates <b>rem</b> instruction to wrap around screen</li>
+					</ol>
+				</section>
+
+				<section data-auto-animate>
+					<h2 class="r-fit-text">Conway's Game of Life</h2>
+					<h3>Workarounds:</h3>
+					<ol>
+						<li>Replicate only part of the frame buffer</li>
+						<li>Linearize memory access using macros</li>
+						<li>Software pipeline techniques to handle edges</li>
+					</ol>
+				</section>
+
+				<section data-auto-animate>
+					<h2 class="r-fit-text">Conway's Game of Life</h2><sup><a href="https://godbolt.org/z/PqerTYx8d">https://godbolt.org/z/PqerTYx8d</a></sup>
+					<pre data-id="code-animation"><code class="hljs c" data-trim data-line-numbers="1-7|11,13-20|22-26|27-41|42-52"><script type="text/template">
+						#define w (320)
+						#define h (240)
+											
+						#define _idx(x,y) ((((x)<<8) + ((x)<<6)) + (y)) // for 320
+						
+						unsigned char univ[h*w];
+						unsigned char b1[w], b2[w], tail[w], head[w];
+						
+						void main()
+						{
+							register unsigned char n;
+							while (1) {
+								if (sw()) { // random
+									register int rnd_v = 0x0110;
+									for_x for_y
+									{  
+										rnd_v = ((rnd_v &(1u << 16))>>16) ^ ((rnd_v & (1u << 14))>>14) ^ ((rnd_v & (1u << 13))>>13) ^ ((rnd_v & (1u << 11))>>11) | rnd_v<<1;
+										univ[_idx(y, x)] = rnd_v & 1;
+									}
+								}
+								else { // game
+									// prologue
+									for_x {
+										head[x] = univ[_idx(0, x)]; 
+										tail[x] = univ[_idx(h-1, x)]; 
+									}
+									// kernel
+									for (register int y = 0; y < h-1; y++) { 
+										for_x {
+											n = tail        [x ? x-1 : w-1 ] + tail     [x]      + tail          [x==w-1 ? 0 : x+1 ] +
+												univ[_idx(y  , x ? x-1 : w-1)] +                     univ[_idx(y  , x==w-1 ? 0 : x+1)] +
+												univ[_idx(y+1, x ? x-1 : w-1)] + univ[_idx(y+1,x)] + univ[_idx(y+1, x==w-1 ? 0 : x+1)]; 
+											b1[x] = ((n | univ[_idx(y,x)]) == 3);
+										}
+										for_x {
+											tail[x] = univ[_idx(y,x)];
+											if (y > 0) 
+												univ[_idx(y-1, x)] = b2[x];
+											b2[x] = b1[x];
+										}
+									}
+									// epilogue
+									for_x {
+										n =       tail[x ? x-1 : w-1]  + tail[x] + tail[x==w-1 ? 0 : x+1] +
+										univ[_idx(h-1, x ? x-1 : w-1)] + univ[_idx(h-1, x==w-1 ? 0 : x+1)] +
+										          head[x ? x-1 : w-1]  + head[x] + head[x==w-1 ? 0 : x+1]; 
+										b2[x] = ((n | univ[_idx(h-1, x)]) == 3);
+									}
+									for_x {
+										univ[_idx(h-2, x)] = b1[x];
+										univ[_idx(h-1, x)] = b2[x];
+									}
+								}
+							}
+							return;
+						}
+					</script></code></pre>					
+				</section>					
+
+				<section>
+					<h2>Let's do it!</h2>
+					<h3>Pratice time (Lab. #5c)</h3>
+					<img src="../img/little_girl.jpg" style="height: 50vh;">
 				</section>
 
 				<section>
@@ -594,7 +1106,7 @@
 					<h1>Thank you!</h1>
 					<h2 class="r-fit-text">FPGA from Blinker to Game of Life,<br> through RISC-V also</h2>
 					<p>
-						<small><a href="mailto:menotti@ufscar.br">Prof. Ricardo Menotti</a> and <a href="mailto:thiago.martins@estudante.ufscar.br">Thiago Martins</a></small>
+						<small><a href="mailto:menotti@ufscar.br">Prof. Ricardo Menotti</a>, <a href="mailto:thiago.martins@estudante.ufscar.br">Thiago Martins</a> and <a href="mailto:gbarreto@estudante.ufscar.br" class="href">Gustavo M. Barreto</a></small>
 					</p>
 				</section>
 
@@ -650,7 +1162,6 @@
 		</script>
 	</body>
 </html>
-
 
 <section>
 	<h2>title</h2>

@@ -51,9 +51,9 @@ void main()
             }
             // epilogue
             for_x {
-                n = tail     [x ? x-1 : w-1] + tail   [x] + tail     [x==w-1 ? 0 : x+1] +
-                    univ[_idx(h-1, x ? x-1 : w-1)] +              univ[_idx(h-1, x==w-1 ? 0 : x+1)] +
-                    head     [x ? x-1 : w-1] + head   [x] + head     [x==w-1 ? 0 : x+1]; 
+                n =       tail[x ? x-1 : w-1]  + tail[x] + tail[x==w-1 ? 0 : x+1] +
+                univ[_idx(h-1, x ? x-1 : w-1)] + univ[_idx(h-1, x==w-1 ? 0 : x+1)] +
+                          head[x ? x-1 : w-1]  + head[x] + head[x==w-1 ? 0 : x+1]; 
                 b2[x] = ((n | univ[_idx(h-1, x)]) == 3);
             }
             for_x {
