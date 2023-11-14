@@ -5,6 +5,9 @@ cd lab#
 make -f ../Makefile program
 ```
 
+## Lab. 0 - basic simulations
+
+
 ## Lab. 1 - blink/counter
 
 
