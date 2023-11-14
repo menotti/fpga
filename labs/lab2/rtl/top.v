@@ -1,21 +1,16 @@
 module top (
     input CLOCK_50, // 50MHz
-    output [6:0] HEX5,
-    output [6:0] HEX4,
-    output [6:0] HEX3,
-    output [6:0] HEX2,
-    output [6:0] HEX1,
-    output [6:0] HEX0); 
+    output [6:0] HEX5, HEX4, HEX3, HEX2, HEX1, HEX0); 
     
     integer count = 0; // FPGAs rocks! 
 
     always@(posedge CLOCK_50)
         count <= count + 1;
 
-	 wire clk1hz;
-	 assign clk1hz = count[25];
+	wire clk1hz;
+	assign clk1hz = count[25];
 	 
-	 wire [31:0] fibo;
+	wire [31:0] fibo;
     fibonacci seq(clk1hz, fibo);
 	 
     dec7seg d5(fibo[23:20], HEX5);

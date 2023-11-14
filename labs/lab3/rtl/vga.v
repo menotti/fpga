@@ -29,7 +29,7 @@ module vga #(
     vga_DA <= (CounterX < WIDTH) && (CounterY < HEIGHT);
   end
   
-  wire [5:0] row, col;
+  wire [5:0] row, col;        // downsampling:
   assign row = (CounterY>>5); // 32 pixels x
   assign col = (CounterX>>5); // 32 pixels 
   assign vaddr = col + (row<<4) + (row<<2); // addr = col + row x 20

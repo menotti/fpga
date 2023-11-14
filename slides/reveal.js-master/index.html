@@ -118,7 +118,7 @@
 						</p>
 					</section>
 					<section data-state="eventwhite">
-						<h2>Maldelbrot set [<a href="#refs">6</a>]</h2>
+						<h2>Mandelbrot set [<a href="#refs">6</a>]</h2>
 						<small><table class="tg">
 							<tbody><tr>
 							  <th class="tg-cxkv"></th>
@@ -169,47 +169,79 @@
 					<p>
 						<a href="https://github.com/menotti/fpga/">click here to open a hardware simulator (a.k.a. Github)</a>
 					</p>
+					<ul>
+						<li>Press . to edit with VS Code 🥚</li>
+						<li>Install the following extensions:</li>
+						<ul>
+							<li>Verilog Highlight</li>
+							<li>DigitalJS</li>
+						</ul>
+					</ul>
 				</section>
 
 				<section data-auto-animate data-state="eventbeige">
 					<h2>Our first Blinker</h2>
-					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers="|2-3|5|7-8|10-11"><script type="text/template">
-						module blinker (
-							input CLOCK_50, // 50MHz
-							output [3:0] LEDR); // How many LEDs do we have?
+					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers="|2-3|5|7-8|10-11|"><script type="text/template">
+						module top (
+							input CLOCK_50,     // 50MHz
+							output [9:0] LEDR); // How many LEDs do we have?
 							
-							integer count = 0; // FPGAs rocks! 
-
+							integer count = 0;  // FPGAs rocks! 
+						
 							always@(posedge CLOCK_50)
 								count <= count + 1;
-
+						
 							// What's The Frequency, Kenneth?
-							assign LEDR = {4{count[31]}}; 
+							assign LEDR = {10{count[25]}}; 
 						endmodule
-					</script></code></pre>					
+					</script></code></pre>
+				</section>
+
+				<section>
+					<h2>Let's do it!</h2>
+					<h3>Pratice time (Lab. #1)</h3>
+					<img src="../img/little_girl.jpg" style="height: 50vh;">
+				</section>
+
+				<section data-auto-animate data-state="eventbeige">
+					<h2>Our first Blinker</h2>
+					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers><script type="text/template">
+						module top (
+							input CLOCK_50,     // 50MHz
+							output [9:0] LEDR); // How many LEDs do we have?
+							
+							integer count = 0;  // FPGAs rocks! 
+						
+							always@(posedge CLOCK_50)
+								count <= count + 1;
+						
+							// What's The Frequency, Kenneth?
+							assign LEDR = {10{count[25]}}; 
+						endmodule
+					</script></code></pre>
 				</section>
 
 				<section data-auto-animate data-state="eventbeige">
 					<h2>Our first Counter</h2>
 					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers><script type="text/template">
-						module blinker (
-							input CLOCK_50, // 50MHz
-							output [3:0] LEDR); // How many LEDs do we have?
+						module top (
+							input CLOCK_50,     // 50MHz
+							output [9:0] LEDR); // How many LEDs do we have?
 							
-							integer count = 0; // FPGAs rocks! 
-
+							integer count = 0;  // FPGAs rocks! 
+						
 							always@(posedge CLOCK_50)
 								count <= count + 1;
-
+						
 							// What's The Frequency, Kenneth?
-							assign LEDR = count[31:28]; 
+							assign LEDR = count[31:22]; 
 						endmodule
 					</script></code></pre>					
 				</section>
 				
 				<section>
 					<h2>Our first Counter</h2>
-					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers="1|2|3|5|9|17|19-25"><script type="text/template">
+					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers="1|2|3|5|9|17|19-31"><script type="text/template">
 						00000000000000000000000000000000
 						00000000000000000000000000000001
 						00000000000000000000000000000010
@@ -230,11 +262,17 @@
 						                             ...
 						11111111111111111111111111111111 = 2^32 = 4.294.967.296
 						00000000000000000000000000000000
-						↓↓↓↓
-						↓↓↓LEDR[0]
-						↓↓LEDR[1]
-						↓LEDR[2]
-						LEDR[3]
+						↓↓↓↓↓↓↓↓↓↓
+						↓↓↓↓↓↓↓↓↓LEDR[0]
+						↓↓↓↓↓↓↓↓LEDR[1]
+						↓↓↓↓↓↓↓LEDR[2]
+						↓↓↓↓↓↓LEDR[3]
+						↓↓↓↓↓LEDR[4]
+						↓↓↓↓LEDR[5]
+						↓↓↓LEDR[6]
+						↓↓LEDR[7]
+						↓LEDR[8]
+						LEDR[9]
 					</script></code></pre>					
 				</section>
 
@@ -263,6 +301,36 @@
 					  assign fibo = a;
 					endmodule
 					</script></code></pre>					
+					<a href="https://github.dev/menotti/fpga/labs/lab2/rtl/fibonacci.v">Simulate it here!</a>
+				</section>
+
+				<section data-auto-animate data-state="eventbeige">
+					<h2>Seven segments decoder</h2>
+					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers><script type="text/template">
+						module dec7seg (
+							input  [3:0] hex,
+							output reg [6:0] segs);
+							always @(hex)        // gfedcba
+							  case (hex)         // 6543210
+									4'b0000 : segs = 7'b1000000; // 0
+									4'b0001 : segs = 7'b1111001; // 1
+									4'b0010 : segs = 7'b0100100; // 2
+									4'b0011 : segs = 7'b0110000; // 3
+									4'b0100 : segs = 7'b0011001; // 4
+									4'b0101 : segs = 7'b0010010; // 5
+									4'b0110 : segs = 7'b0000010; // 6
+									4'b0111 : segs = 7'b1111000; // 7
+									4'b1000 : segs = 7'b0000000; // 8
+									4'b1001 : segs = 7'b0010000; // 9
+									4'b1010 : segs = 7'b0001000; // A
+									4'b1011 : segs = 7'b0000011; // b
+									4'b1100 : segs = 7'b1000110; // C
+									4'b1101 : segs = 7'b0100001; // d
+									4'b1110 : segs = 7'b0000110; // E
+									4'b1111 : segs = 7'b0001110; // F
+							  endcase
+						endmodule
+					</script></code></pre>
 				</section>
 
 				<section>
@@ -286,6 +354,120 @@
 				</section>
 
 				<section>
+					<h2>VGA signal generation</h2>
+					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers="1|2-4|6-8|10-12|16-19|21-25|27-29|32-35"><script type="text/template">
+						module vga #(          // 640 x 480 @ 25 MHz (negative)
+							parameter VGA_BITS = 8, WIDTH = 640, HEIGHT = 480,
+							HFRONT = 16, HSYNC = 96, HBACK = 48, HPULSEN = 1,
+							VFRONT = 10, VSYNC =  2, VBACK = 33, VPULSEN = 1
+						  ) (
+							input clk,
+							output [8:0] vaddr,
+							output reg vga_HS, vga_VS, vga_DA);
+						  
+							reg [9:0] CounterX, CounterY;
+							wire CounterXmaxed = (CounterX == (WIDTH + HFRONT + HSYNC + HBACK));
+							wire CounterYmaxed = (CounterY == (HEIGHT + VFRONT + VSYNC + VBACK));
+							
+							always @(posedge clk)
+							begin
+								if (CounterXmaxed)
+									CounterX <= 10'b0;
+								else
+									CounterX <= CounterX + 1'b1;
+									
+								if (CounterXmaxed)
+									if(CounterYmaxed)
+										CounterY <= 10'b0;
+									else
+										CounterY <= CounterY + 1'b1;
+									
+								vga_HS <= HPULSEN[0] ^ (CounterX > ( WIDTH + HFRONT) && (CounterX < ( WIDTH + HFRONT + HSYNC)));
+								vga_VS <= VPULSEN[0] ^ (CounterY > (HEIGHT + VFRONT) && (CounterY < (HEIGHT + VFRONT + VSYNC)));
+								vga_DA <= (CounterX < WIDTH) && (CounterY < HEIGHT);
+							end
+							
+							wire [5:0] row, col;        // downsampling:
+							assign row = (CounterY>>5); // 32 pixels x
+							assign col = (CounterX>>5); // 32 pixels 
+							assign vaddr = col + (row<<4) + (row<<2); // addr = col + row x 20
+						endmodule
+					</script></code></pre>					
+				</section>				
+
+				<section>
+					<h2 class="r-fit-text">ROM memory (with contents)</h2>
+					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers><script type="text/template">
+						module rom(
+							input clock,
+							input [8:0] vaddr,
+							output reg [7:0] vdata);
+						  
+							reg [7:0] ROM [0:511];
+							
+							initial
+								$readmemb("mario8.bin", ROM);
+							   
+							always @(posedge clock)
+								vdata <= ROM[vaddr];
+						endmodule
+					</script></code></pre>
+				</section>
+
+				<section>
+					<h2 class="r-fit-text">Linear-Feedback Shift Register (LFSR)</h2>
+					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers><script type="text/template">
+						module random (
+							input clk,
+							output reg [30:0] lfsr);
+						  
+							always @(posedge clk)
+								lfsr = {lfsr[29:0], lfsr[16] ^~ lfsr[14] ^~ lfsr[13] ^~ lfsr[11]};
+						endmodule
+					</script></code></pre>					
+				</section>
+
+				<section>
+					<h2>Putting all together</h2>
+					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers="1-7|9-10|12-15|17-18|20-22|24-26|28-30|32-33"><script type="text/template">
+						module top #(parameter VGA_BITS = 4) (
+							input CLOCK_50, // 50MHz
+							input [3:0] SW,
+							output [VGA_BITS-1:0] VGA_R, VGA_G, VGA_B,
+							output VGA_HS, VGA_VS,
+							output reg VGA_CLK, 
+							output VGA_BLANK_N, VGA_SYNC_N);
+							
+							always@(posedge CLOCK_50)
+								VGA_CLK = ~VGA_CLK; // 25MHz
+							  
+							wire [7:0] vdata;
+							wire [8:0] vaddr;
+							wire [23:0] color, gray, image, fill, zero, rand;
+							assign zero = 24'b0;
+							
+							random lfsr(VGA_CLK, rand);
+							assign fill = SW[1] ? rand : zero;
+						  
+							wire vga_DA; 	 
+							vga #(VGA_BITS) video(VGA_CLK, vaddr, VGA_HS, VGA_VS, vga_DA);
+							rom mario(VGA_CLK, vaddr, vdata);
+							
+							assign color = {vdata[5:4], fill[17:12], vdata[3:2], fill[11:6], vdata[1:0], fill[5:0]};
+							gray c2g(color, gray);
+							assign image = SW[0] ? color : gray;
+							
+							assign VGA_R = vga_DA ? image[23:23-VGA_BITS+1] : {VGA_BITS{1'b0}};
+							assign VGA_G = vga_DA ? image[15:15-VGA_BITS+1] : {VGA_BITS{1'b0}};
+							assign VGA_B = vga_DA ? image[07:07-VGA_BITS+1] : {VGA_BITS{1'b0}};
+							
+							assign VGA_BLANK_N = 1'b1;
+							assign VGA_SYNC_N  = 1'b0;
+						endmodule
+					</script></code></pre>					
+				</section>
+
+				<section>
 					<h2>Let's do it!</h2>
 					<h3>Pratice time (Lab. #3)</h3>
 					<img src="../img/little_girl.jpg" style="height: 50vh;">
@@ -300,97 +482,25 @@
 				</section>
 
 				<section>
+					<p>
+						<h2>Conway's Game of Life</h2>
+						<ol><li>Any live cell with fewer than two live neighbours dies, as if by underpopulation;</li>
+							<li>Any live cell with two or three live neighbours lives on to the next generation;</li>
+							<li>Any live cell with more than three live neighbours dies, as if by overpopulation;</li>
+							<li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.</li>
+						</ol>
+					</p>
+				</section>
+
+				<section>
+					<h2>Hardware design [<a href="#refs">7</a>]</h2>
 					<a href="https://github.com/hrvach/Life_MiSTer">
-						<img src="https://raw.githubusercontent.com/hrvach/Life_MiSTer/master/img/diagram.png" height="50%"> 
+						<img src="https://raw.githubusercontent.com/hrvach/Life_MiSTer/master/img/diagram.png" width="100%"> 
 					</a>
-					<h2>File structure</h2>
-					<ul>
-						<li>top.v</li>
-						<ul>
-							<li>vga.v</li>
-							<li>gol.v</li>
-							<ul>
-								<li>random.v</li>
-							</ul>
-							</ul>
-						</ul>
 				</section>
 
 				<section data-auto-animate>
-					<h2 class="r-fit-text" data-id="code-title">Top-level file (top.v)</h2>
-					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers="1-11|13|14-19|21-22|24-25|27-28|30-32"><script type="text/template">
-						//////////////////////////////////////////////////////////////////////////////////
-						// Company: UFSCar
-						// Author: Ricardo Menotti
-						// 
-						// Create Date: 02.10.2023 07:12
-						// Project Name: 
-						// Design Name: Conway's Game of Life 
-						// Module Name: gol
-						// Target Devices: EP4CE115F29C7
-						// Tool Versions: Quartus Prime Lite Edition 21.1.1 Build 850
-						//////////////////////////////////////////////////////////////////////////////////
-						
-						module top #(parameter VGA_BITS = 8) (
-							input CLOCK_50, // 50MHz
-							input [3:0] SW,
-							output [VGA_BITS-1:0] VGA_R, VGA_G, VGA_B,
-							output VGA_HS_O, VGA_VS_O,
-							output reg VGA_CLK, 
-							output VGA_BLANK_N, VGA_SYNC_N);
-							
-							wire VGA_DA; // In display area
-							wire VGA_PIXEL;
-
-							always@(posedge CLOCK_50)
-								VGA_CLK = ~VGA_CLK; // 25MHz
-
-							vga video(VGA_CLK, VGA_HS_O, VGA_VS_O, VGA_DA);
-							gol board(VGA_CLK, SW[0], VGA_DA, VGA_PIXEL);
-
-							assign VGA_R = {VGA_BITS{VGA_DA ? SW[3] ^ VGA_PIXEL : 1'b0}};
-							assign VGA_G = {VGA_BITS{VGA_DA ? SW[2] ^ VGA_PIXEL : 1'b0}};
-							assign VGA_B = {VGA_BITS{VGA_DA ? SW[1] ^ VGA_PIXEL : 1'b0}};
-							assign VGA_BLANK_N = 1'b1;
-							assign VGA_SYNC_N  = 1'b0;
-						endmodule
-					</script></code></pre>
-				</section>				
-
-				<section data-auto-animate>
-					<h2 class="r-fit-text" data-id="code-title">VGA 640x480 signal (vga.v)</h2>
-					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers="2-3|5-7|9|11-14|16-20|22-24"><script type="text/template">
-						module vga (
-							input clk,
-							output reg vga_HS, vga_VS, vga_DA);
-						  
-							reg [9:0] CounterX, CounterY;
-							wire CounterXmaxed = (CounterX == 800);
-							wire CounterYmaxed = (CounterY == 525);
-							
-							always @(posedge clk)
-							begin
-								if (CounterXmaxed)
-									CounterX <= 10'b0;
-								else
-									CounterX <= CounterX + 1'b1;
-								  
-								if (CounterXmaxed)
-									if(CounterYmaxed)
-										CounterY <= 10'b0;
-									else
-										CounterY <= CounterY + 1'b1;
-									
-								vga_HS <= ~(CounterX > (640 + 16) && (CounterX < (640 + 16 + 96)));
-								vga_VS <= ~(CounterY > (480 + 10) && (CounterY < (480 + 10 +  2)));
-								vga_DA <= (CounterX < 640) && (CounterY < 480);
-							end
-						  endmodule
-					</script></code></pre>
-				</section>				
-
-				<section data-auto-animate>
-					<h2 class="r-fit-text" data-id="code-title">Conway's Game of Life (gol.v)</h2>
+					<h2 class="r-fit-text" data-id="code-title">Conway's Game of Life</h2>
 					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers="2-3|5-6|8|10-13|15-20|22-24|26-36"><script type="text/template">
 						module gol (
 							input clk, rst, ena,
@@ -430,25 +540,45 @@
 								end
 						  endmodule
 					</script></code></pre>
-				</section>
-
-				<section data-auto-animate>
-					<h2 class="r-fit-text" data-id="code-title">Linear Feedback Shift Register (random.v)</h2>
-					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers="2-3|5-6"><script type="text/template">
-						module random (
-							input clk,
-							output reg [30:0] lfsr);
-
-							always @(posedge clk)
-								lfsr = {lfsr[29:0], lfsr[16] ^~ lfsr[14] ^~ lfsr[13] ^~ lfsr[11]};
-						endmodule
-					</script></code></pre>
-				</section>				
+				</section>			
 
 				<section>
 					<h2>Let's do it!</h2>
 					<h3>Pratice time (Lab. #4)</h3>
 					<img src="../img/little_girl.jpg" style="height: 50vh;">
+				</section>
+
+				<section>
+					<h3>RISC-V is an open standard Instruction Set Architecture (ISA) enabling a new era of processor innovation through open collaboration</h3>
+					<em>RISC-V enables the community to share technical investment, contribute to the strategic future, create more rapidly, enjoy unprecedented design freedom, and substantially reduce the cost of innovation</em>
+				</section>
+
+				<section>
+					<h2>title</h2>
+					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers><script type="text/template">
+					module ...
+					</script></code></pre>					
+				</section>
+
+				<section>
+					<h2>title</h2>
+					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers><script type="text/template">
+					module ...
+					</script></code></pre>					
+				</section>
+
+				<section>
+					<h2>title</h2>
+					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers><script type="text/template">
+					module ...
+					</script></code></pre>					
+				</section>
+
+				<section>
+					<h2>title</h2>
+					<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers><script type="text/template">
+					module ...
+					</script></code></pre>					
 				</section>
 
 				<section>
@@ -477,6 +607,7 @@
 						1. [BOBDA, C, Introduction to Reconfigurable Computing:	Architectures, Algorithms, and Applications, Springer, 2007](https://link.springer.com/book/10.1007/978-1-4020-6100-4)
 						1. [KATALOV, V., Accelerating Password Recovery: the Addition of FPGA, 2012](https://blog.elcomsoft.com/2012/07/accelerating-password-recovery-the-addition-of-fpga/)
 						1. [BOWERS, M.; ULLMANN, A.; JONES, B., Mandelbrot Explorer v1 for the Xilinx Spartan-3E, 2009](https://www.markbowers.org/fpga-mandelbrot)
+						1. [ČAVRAK, H., Conway's Game of Life in FPGA, 2020](https://github.com/hrvach/Life_MiSTer)
 						1. [LEVY, B., From Blinker to RISC-V, 2023](https://github.com/BrunoLevy/learn-fpga/tree/master/FemtoRV/TUTORIALS/FROM_BLINKER_TO_RISCV)
 					</script>
 				</section>
@@ -519,3 +650,11 @@
 		</script>
 	</body>
 </html>
+
+
+<section>
+	<h2>title</h2>
+	<pre data-id="code-animation"><code class="hljs verilog" data-trim data-line-numbers><script type="text/template">
+	module ...
+	</script></code></pre>					
+</section>

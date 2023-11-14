@@ -2,12 +2,12 @@ module rom(
   input clock,
   input [8:0] vaddr,
   output reg [7:0] vdata);
-
-  reg [7:0] RAM[511:0];
+  
+  reg [7:0] ROM [0:511];
   
   initial
-    $readmemb("mario8.bin", RAM);
-	 
+    $readmemb("mario8.bin", ROM);
+    
   always @(posedge clock)
-    vdata <= RAM[vaddr];
+    vdata <= ROM[vaddr];
 endmodule
