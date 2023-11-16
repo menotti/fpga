@@ -67,7 +67,7 @@ module top #(parameter VGA_BITS = 4) (
   dec7seg d4(reg7segs[19:16], HEX4);
   dec7seg d5(reg7segs[23:20], HEX5);
 
-  wire [31:0] IO_rdata = mem_wordaddr[IO_SWS_bit] ? {0, SW} : 32'b0;
+  wire [31:0] IO_rdata = mem_wordaddr[IO_SWS_bit] ? {32'b0, SW} : 32'b0;
   assign mem_rdata = isRAM ? RAM_rdata : IO_rdata;
 
   vga #(VGA_BITS) VGA(
