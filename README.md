@@ -4,7 +4,7 @@ FPGA stuff...
 
 ## Material
 
-  - [SEnC 2023](https://senc.icmc.usp.br/programacao#tab-t-6) [[slides]](slides/reveal.js-master/) [[labs]](labs)
+  - [SEnC 2023](https://senc.icmc.usp.br/programacao#tab-t-6) [[slides]](https://menotti.pro.br/fpga/) [[labs]](labs)
 
 ## Tools
 
