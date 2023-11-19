@@ -3,7 +3,7 @@
 FPGA stuff...
 
 ## Material
-[![Course recording](https://img.youtube.com/vi/Ft4z8790lw0/0.jpg)](https://www.youtube.com/embed/Ft4z8790lw0?si=YpBR_8GIbObJPcV-)
+[![Course recording](https://img.youtube.com/vi/Ft4z8790lw0/0.jpg)](https://www.youtube.com/watch?v=Ft4z8790lw0&ab_channel=Prof.RicardoMenotti)
   - [SEnC 2023](https://senc.icmc.usp.br/programacao#tab-t-6) [[slides]](https://menotti.pro.br/fpga/) [[labs]](labs)
 
 ## Tools
