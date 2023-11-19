@@ -3,7 +3,7 @@
 FPGA stuff...
 
 ## Material
-
+[![Course recording](https://img.youtube.com/vi/Ft4z8790lw0/0.jpg)](https://www.youtube.com/embed/Ft4z8790lw0?si=YpBR_8GIbObJPcV-)
   - [SEnC 2023](https://senc.icmc.usp.br/programacao#tab-t-6) [[slides]](https://menotti.pro.br/fpga/) [[labs]](labs)
 
 ## Tools
@@ -20,6 +20,8 @@ FPGA stuff...
   1. [BOBDA, C, Introduction to Reconfigurable Computing:	Architectures, Algorithms, and Applications, Springer, 2007](https://link.springer.com/book/10.1007/978-1-4020-6100-4)
   1. [KATALOV, V., Accelerating Password Recovery: the Addition of FPGA, 2012](https://blog.elcomsoft.com/2012/07/accelerating-password-recovery-the-addition-of-fpga/)
   1. [BOWERS, M.; ULLMANN, A.; JONES, B., Mandelbrot Explorer v1 for the Xilinx Spartan-3E, 2009](https://www.markbowers.org/fpga-mandelbrot)
+  1. [ČAVRAK, H., Conway's Game of Life in FPGA, 2020](https://github.com/hrvach/Life_MiSTer)
+  1. [LEVY, B., From Blinker to RISC-V, 2023](https://github.com/BrunoLevy/learn-fpga/tree/master/FemtoRV/TUTORIALS/FROM_BLINKER_TO_RISCV)
 
   ## Additional readings
 
