@@ -15,13 +15,19 @@ ASSIGNMENT_FILES = $(PROJECT).qpf $(PROJECT).qsf
 ###################################################################
 # Part, Family, Boardfile 
 # BOARD = DE0_CV
+BOARD = DE1
 # BOARD = DE2_115
-BOARD = DE2i_150
+# BOARD = DE2i_150
 # BOARD = DE10_lite
 ifeq ($(BOARD),DE0_CV)
 	FAMILY = "Cyclone V"
 	PART = 5CEBA4F23C7
 	BOARDFILE = ../DE0_CV.qsf
+endif
+ifeq ($(BOARD),DE1)
+	FAMILY = "Cyclone II"
+	PART = EP2C20F484C7
+	BOARDFILE = ../DE1.qsf
 endif
 ifeq ($(BOARD),DE2_115)
 	FAMILY = "Cyclone IV E"
