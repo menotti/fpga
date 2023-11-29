@@ -77,4 +77,3 @@ set_location_assignment PIN_B10 -to VGA_B[3]
 
 set_location_assignment PIN_A11 -to VGA_HS
 set_location_assignment PIN_B11 -to VGA_VS
-
