@@ -3,4 +3,4 @@
 	url = https://github.com/menotti/ld
 [submodule "code/learn-fpga"]
 	path = code/learn-fpga
-	url = https://github.com/BrunoLevy/learn-fpga/
+	url = https://github.com/BrunoLevy/learn-fpga
