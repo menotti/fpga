@@ -1,4 +1,4 @@
-module top #(parameter VGA_BITS = 4) (
+module top #(parameter VGA_BITS = 8) (
   input CLOCK_50, // 50MHz
   input [9:0] SW,
   output reg [9:0] LEDR, // How many LEDs do we have?

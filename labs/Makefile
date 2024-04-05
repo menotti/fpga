@@ -15,8 +15,8 @@ ASSIGNMENT_FILES = $(PROJECT).qpf $(PROJECT).qsf
 ###################################################################
 # Part, Family, Boardfile 
 # BOARD = DE0_CV
-BOARD = DE1
-# BOARD = DE2_115
+# BOARD = DE1
+BOARD = DE2_115
 # BOARD = DE2i_150
 # BOARD = DE10_lite
 ifeq ($(BOARD),DE0_CV)
@@ -79,14 +79,14 @@ smart: smart.log
 #               Commented out so it may be set from environment.
 ###################################################################
 
-# QUARTUS_PATH = /opt/altera/13.0sp1/quartus/bin/
+QUARTUS_PATH = /opt/altera/13.1/quartus/bin/
 
-QUARTUS_MAP  = quartus_map
-QUARTUS_FIT  = quartus_fit
-QUARTUS_ASM  = quartus_asm
-QUARTUS_STA  = quartus_sta
-QUARTUS_SH   = quartus_sh
-QUARTUS_PGM  = quartus_pgm
+QUARTUS_MAP  = $(QUARTUS_PATH)quartus_map
+QUARTUS_FIT  = $(QUARTUS_PATH)quartus_fit
+QUARTUS_ASM  = $(QUARTUS_PATH)quartus_asm
+QUARTUS_STA  = $(QUARTUS_PATH)quartus_sta
+QUARTUS_SH   = $(QUARTUS_PATH)quartus_sh
+QUARTUS_PGM  = $(QUARTUS_PATH)quartus_pgm
 
 ifeq ($(shell uname -m),x86_64)
 	QUARTUS_ARGS = --64bit

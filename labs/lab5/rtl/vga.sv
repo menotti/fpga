@@ -1,4 +1,4 @@
-module vga #(parameter VGA_BITS = 4) (
+module vga #(parameter VGA_BITS = 8) (
   input clk,
   input [31:0] vdata,
   output [VGA_BITS-1:0] VGA_R, VGA_G, VGA_B,
