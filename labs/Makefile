@@ -16,13 +16,21 @@ ASSIGNMENT_FILES = $(PROJECT).qpf $(PROJECT).qsf
 # Part, Family, Boardfile 
 # BOARD = DE0_CV
 # BOARD = DE1
-BOARD = DE2_115
+# BOARD = DE2_115
 # BOARD = DE2i_150
 # BOARD = DE10_lite
+BOARD = DE10_standard
+
 ifeq ($(BOARD),DE0_CV)
 	FAMILY = "Cyclone V"
 	PART = 5CEBA4F23C7
 	BOARDFILE = ../DE0_CV.qsf
+endif
+ifeq ($(BOARD),DE10_standard)
+	FAMILY = "Cyclone V"
+	PART = 5CSXFC6D6F31C6
+	BOARDFILE = ../DE10_standard.qsf
+	JTAG_DEVICE_INDEX = @2
 endif
 ifeq ($(BOARD),DE1)
 	FAMILY = "Cyclone II"
@@ -79,7 +87,7 @@ smart: smart.log
 #               Commented out so it may be set from environment.
 ###################################################################
 
-QUARTUS_PATH = /opt/altera/13.1/quartus/bin/
+QUARTUS_PATH = /opt/intelFPGA/23.1std/quartus/bin/
 
 QUARTUS_MAP  = $(QUARTUS_PATH)quartus_map
 QUARTUS_FIT  = $(QUARTUS_PATH)quartus_fit
@@ -144,7 +152,7 @@ asm.chg:
 ###################################################################
 
 program: all $(PROJECT).sof
-	$(QUARTUS_PGM) $(PGM_ARGS) -o "P;$(PROJECT).sof"
+	$(QUARTUS_PGM) $(PGM_ARGS) -o "P;$(PROJECT).sof$(JTAG_DEVICE_INDEX)"
 
 program-pof: $(PROJECT).pof
 	$(QUARTUS_PGM) $(PGM_ARGS) -o "BVP;$(PROJECT).pof"
