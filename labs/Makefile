@@ -17,9 +17,9 @@ ASSIGNMENT_FILES = $(PROJECT).qpf $(PROJECT).qsf
 # BOARD = DE0_CV
 # BOARD = DE1
 # BOARD = DE2_115
-# BOARD = DE2i_150
+BOARD = DE2i_150
 # BOARD = DE10_lite
-BOARD = DE10_standard
+# BOARD = DE10_standard
 
 ifeq ($(BOARD),DE0_CV)
 	FAMILY = "Cyclone V"
@@ -87,7 +87,7 @@ smart: smart.log
 #               Commented out so it may be set from environment.
 ###################################################################
 
-QUARTUS_PATH = /opt/intelFPGA/23.1std/quartus/bin/
+QUARTUS_PATH = /opt/intelFPGA_lite/22.1std/quartus/bin/
 
 QUARTUS_MAP  = $(QUARTUS_PATH)quartus_map
 QUARTUS_FIT  = $(QUARTUS_PATH)quartus_fit
