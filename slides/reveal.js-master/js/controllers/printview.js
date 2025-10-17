@@ -4,7 +4,7 @@ import { queryAll, createStyleSheet } from '../utils/util.js'
 /**
  * Setups up our presentation for printing/exporting to PDF.
  */
-export default class Print {
+export default class PrintView {
 
 	constructor( Reveal ) {
 
@@ -222,6 +222,8 @@ export default class Print {
 
 		// Notify subscribers that the PDF layout is good to go
 		this.Reveal.dispatchEvent({ type: 'pdf-ready' });
+
+		viewportElement.classList.remove( 'loading-scroll-mode' );
 
 	}
 
